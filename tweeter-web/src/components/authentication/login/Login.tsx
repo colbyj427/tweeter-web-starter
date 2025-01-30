@@ -1,12 +1,13 @@
 import "./Login.css";
 import "bootstrap/dist/css/bootstrap.css";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { UserInfoContext } from "../../userInfo/UserInfoProvider";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import AuthenticationFormLayout from "../AuthenticationFormLayout";
 import { AuthToken, FakeData, User } from "tweeter-shared";
 import useToastListener from "../../toaster/ToastListenerHook";
+import AuthFields from "../authFields/AuthFields";
 
 interface Props {
   originalUrl?: string;
@@ -24,12 +25,6 @@ const Login = (props: Props) => {
 
   const checkSubmitButtonStatus = (): boolean => {
     return !alias || !password;
-  };
-
-  const loginOnEnter = (event: React.KeyboardEvent<HTMLElement>) => {
-    if (event.key == "Enter" && !checkSubmitButtonStatus()) {
-      doLogin();
-    }
   };
 
   const doLogin = async () => {
@@ -71,29 +66,13 @@ const Login = (props: Props) => {
   const inputFieldGenerator = () => {
     return (
       <>
-        <div className="form-floating">
-          <input
-            type="text"
-            className="form-control"
-            size={50}
-            id="aliasInput"
-            placeholder="name@example.com"
-            onKeyDown={loginOnEnter}
-            onChange={(event) => setAlias(event.target.value)}
-          />
-          <label htmlFor="aliasInput">Alias</label>
-        </div>
-        <div className="form-floating mb-3">
-          <input
-            type="password"
-            className="form-control bottom"
-            id="passwordInput"
-            placeholder="Password"
-            onKeyDown={loginOnEnter}
-            onChange={(event) => setPassword(event.target.value)}
-          />
-          <label htmlFor="passwordInput">Password</label>
-        </div>
+        <AuthFields 
+        alias={alias}
+        password={password}
+        onAliasChange={setAlias}
+        onPasswordChange={setPassword}
+        submitButtonStatus={false}
+        function={doLogin}/>
       </>
     );
   };
