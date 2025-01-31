@@ -83,3 +83,7 @@ const AppNavbar = () => {
 };
 
 export default AppNavbar;
+function useUserInfo(): { authToken: any; clearUserInfo: any; } {
+  throw new Error("Function not implemented.");
+}
+

@@ -1,5 +1,6 @@
 import { Context, createContext, useState } from "react";
-import { User, AuthToken } from "tweeter-shared";
+import { User, AuthToken, FakeData } from "tweeter-shared";
+import useToastListener from "../toaster/ToastListenerHook";
 
 const CURRENT_USER_KEY: string = "CurrentUserKey";
 const AUTH_TOKEN_KEY: string = "AuthTokenKey";
@@ -16,6 +17,9 @@ interface UserInfo {
   ) => void;
   clearUserInfo: () => void;
   setDisplayedUser: (user: User) => void;
+  extractAlias: (value: string) => string;
+  getUser: (authToken: AuthToken, alias: string) => User | null;
+  navigateToUser: (event: React.MouseEvent) => Promise<void>;
 }
 
 const defaultUserInfo: UserInfo = {
@@ -30,10 +34,14 @@ const defaultUserInfo: UserInfo = {
   ) => null,
   clearUserInfo: () => null,
   setDisplayedUser: (user) => null,
+  extractAlias: (value: string) => "",
+  getUser: (authToken: AuthToken, alias: string) => null,
+  navigateToUser: async (event: React.MouseEvent) => {}
 };
 
 export const UserInfoContext: Context<UserInfo> =
   createContext<UserInfo>(defaultUserInfo);
+  const { displayErrorMessage } = useToastListener();
 
 interface Props {
   children: React.ReactNode;
@@ -103,6 +111,39 @@ const UserInfoProvider: React.FC<Props> = ({ children }) => {
       authToken: null,
     });
     clearLocalStorage();
+  };
+
+  const navigateToUser = async (event: React.MouseEvent): Promise<void> => {
+    event.preventDefault();
+
+    try {
+      const alias = extractAlias(event.target.toString());
+
+      const user = await getUser(defaultUserInfo.authToken!, alias);
+
+      if (!!user) {
+        if (defaultUserInfo.currentUser!.equals(user)) {
+          setDisplayedUser(defaultUserInfo.currentUser!);
+        } else {
+          setDisplayedUser(user);
+        }
+      }
+    } catch (error) {
+      displayErrorMessage(`Failed to get user because of exception: ${error}`);
+    }
+  };
+
+  const extractAlias = (value: string): string => {
+    const index = value.indexOf("@");
+    return value.substring(index);
+  };
+
+  const getUser = async (
+    authToken: AuthToken,
+    alias: string
+  ): Promise<User | null> => {
+    // TODO: Replace with the result of calling server
+    return FakeData.instance.findUserByAlias(alias);
   };
 
   const setDisplayedUser = (user: User) => {

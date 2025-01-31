@@ -9,10 +9,13 @@ interface NavigationHook {
     setDisplayedUser: (user: User) => void;
     updateUserInfo: (currentUser: User, displayedUser: User | null, authToken: AuthToken, remember: boolean) => void;
     clearUserInfo: () => void;
+    extractAlias: (value: string) => string;
+    getUser: (authToken: AuthToken, alias: string) => User | null;
+    navigateToUser: (event: React.MouseEvent) => Promise<void>;
 }
 
 const useUserNavigationHook = (): NavigationHook => {
-    const { setDisplayedUser, updateUserInfo, clearUserInfo, currentUser, displayedUser, authToken } =
+    const { setDisplayedUser, updateUserInfo, clearUserInfo, extractAlias, getUser, navigateToUser, currentUser, displayedUser, authToken } =
     useContext(UserInfoContext);
 
     return {
@@ -21,7 +24,10 @@ const useUserNavigationHook = (): NavigationHook => {
         authToken: authToken,
         setDisplayedUser: setDisplayedUser, 
         updateUserInfo: updateUserInfo,
-        clearUserInfo: clearUserInfo
+        clearUserInfo: clearUserInfo,
+        extractAlias: extractAlias,
+        getUser: getUser,
+        navigateToUser: navigateToUser
     };
 }
 
