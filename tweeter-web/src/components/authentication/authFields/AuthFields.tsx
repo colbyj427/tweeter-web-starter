@@ -1,8 +1,8 @@
-import { useContext, useState } from "react";
-import { UserInfoContext } from "../../userInfo/UserInfoProvider";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useToastListener from "../../toaster/ToastListenerHook";
 import { AuthToken, FakeData, User } from "tweeter-shared";
+import useUserNavigationHook from "../../userInfo/UserNavigationHook";
 
 interface Props {
     originalUrl?: string;
@@ -20,7 +20,7 @@ const AuthFields = (props: Props) => {
     const [isLoading, setIsLoading] = useState(false);
 
     const navigate = useNavigate();
-    const { updateUserInfo } = useContext(UserInfoContext);
+    const { updateUserInfo } = useUserNavigationHook();
     const { displayErrorMessage } = useToastListener();
 
     const checkSubmitButtonStatus = (): boolean => {

@@ -1,10 +1,9 @@
-import { useContext } from "react";
-import { UserInfoContext } from "../userInfo/UserInfoProvider";
 import { AuthToken, User } from "tweeter-shared";
 import { useState, useEffect } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import UserItem from "../userItem/UserItem";
 import useToastListener from "../toaster/ToastListenerHook";
+import useUserNavigationHook from "../userInfo/UserNavigationHook";
 
 export const PAGE_SIZE = 10;
 
@@ -29,7 +28,7 @@ const UserItemScroller = (props: Props) => {
   const addItems = (newItems: User[]) =>
     setNewItems(newItems);
 
-  const { displayedUser, authToken } = useContext(UserInfoContext);
+  const { displayedUser, authToken } = useUserNavigationHook();
 
   // Initialize the component whenever the displayed user changes
   useEffect(() => {
