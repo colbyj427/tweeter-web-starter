@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { AuthToken, FakeData, User } from "tweeter-shared";
 import useToastListener from "../toaster/ToastListenerHook";
-import useUserNavigationHook from "./UserNavigationHook";
+import useUserInfoHook from "./UserInfoHook";
 
 const UserInfo = () => {
   const [isFollower, setIsFollower] = useState(false);
@@ -15,7 +15,7 @@ const UserInfo = () => {
     useToastListener();
 
   const { currentUser, authToken, displayedUser, setDisplayedUser } =
-  useUserNavigationHook();
+  useUserInfoHook();
 
   if (!displayedUser) {
     setDisplayedUser(currentUser!);
