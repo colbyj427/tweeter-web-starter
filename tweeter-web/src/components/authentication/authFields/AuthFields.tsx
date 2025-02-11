@@ -1,8 +1,3 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import useToastListener from "../../toaster/ToastListenerHook";
-import { AuthToken, FakeData, User } from "tweeter-shared";
-import useUserInfoHook from "../../userInfo/UserInfoHook";
 
 interface Props {
     originalUrl?: string;
@@ -16,13 +11,6 @@ interface Props {
 
 const AuthFields = (props: Props) => {
 
-    const [rememberMe] = useState(false);
-    const [isLoading, setIsLoading] = useState(false);
-
-    const navigate = useNavigate();
-    const { updateUserInfo } = useUserInfoHook();
-    const { displayErrorMessage } = useToastListener();
-
     const checkSubmitButtonStatus = (): boolean => {
         return !props.alias || !props.password;
       };
@@ -32,42 +20,6 @@ const AuthFields = (props: Props) => {
           props.function();
         }
       };
-
-    const doLogin = async () => {
-    try {
-        setIsLoading(true);
-
-        const [user, authToken] = await login(props.alias, props.password);
-
-        updateUserInfo(user, user, authToken, rememberMe);
-
-        if (!!props.originalUrl) {
-        navigate(props.originalUrl);
-        } else {
-        navigate("/");
-        }
-    } catch (error) {
-        displayErrorMessage(
-        `Failed to log user in because of exception: ${error}`
-        );
-    } finally {
-        setIsLoading(false);
-    }
-    };
-
-    const login = async (
-    alias: string,
-    password: string
-    ): Promise<[User, AuthToken]> => {
-    // TODO: Replace with the result of calling the server
-    const user = FakeData.instance.firstUser;
-
-    if (user === null) {
-        throw new Error("Invalid alias or password");
-    }
-
-    return [user, FakeData.instance.authToken];
-    };
 
     return (
         <>
