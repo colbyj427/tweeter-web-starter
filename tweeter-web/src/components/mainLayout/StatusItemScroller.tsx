@@ -1,20 +1,15 @@
-import { AuthToken, Status} from "tweeter-shared";
+import { Status} from "tweeter-shared";
 import { useState, useEffect } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import useToastListener from "../toaster/ToastListenerHook";
 import StatusItem from "../statusItem/statusItem";
 import useUserInfoHook from "../userInfo/UserInfoHook";
+import { StatusItemView, StatusItemPresenter } from "../../presenters/StatusItemPresenter";
 
 export const PAGE_SIZE = 10;
 
 interface Props {
-    itemDescription: String;
-    loadMore: (
-        authToken: AuthToken,
-        userAlias: string,
-        pageSize: number,
-        lastItem: Status | null
-    ) => Promise<[Status[], boolean]>
+  presenterGenerator: (view: StatusItemView) => StatusItemPresenter;
 }
 
 const StatusItemScroller = (props: Props) => {
@@ -52,29 +47,22 @@ const StatusItemScroller = (props: Props) => {
     const reset = async () => {
         setItems([]);
         setNewItems([]);
-        setLastItem(null);
-        setHasMoreItems(true);
         setChangedDisplayedUser(true);
+
+        presenter.reset();
     }
 
-    const loadMoreItems = async () => {
-        try {
-        const [newItems, hasMore] = await props.loadMore(
-            authToken!,
-            displayedUser!.alias,
-            PAGE_SIZE,
-            lastItem
-        );
+    const listener: StatusItemView = {
+        addItems: (newItems: Status[]) =>
+          setNewItems(newItems),
+        displayErrorMessage: displayErrorMessage
+      }
 
-        setHasMoreItems(hasMore);
-        setLastItem(newItems[newItems.length - 1]);
-        addItems(newItems);
+    const [presenter] = useState(props.presenterGenerator(listener));
+
+    const loadMoreItems = async () => {
+        presenter.loadMoreItems(authToken!, displayedUser!.alias)
         setChangedDisplayedUser(false)
-        } catch (error) {
-        displayErrorMessage(
-            `Failed to load ${props.itemDescription} items because of exception: ${error}`
-        );
-        }
     };
 
     return (
