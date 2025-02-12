@@ -5,14 +5,14 @@ import { StatusItemPresenter, StatusItemView } from "./StatusItemPresenter";
 export const PAGE_SIZE = 10;
 
 export class FeedPresenter extends StatusItemPresenter {
-private statusService: StatusService;
+    private statusService: StatusService;
 
-public constructor(view: StatusItemView) {
-    super(view)
-    this.statusService = new StatusService();
-}
+    public constructor(view: StatusItemView) {
+        super(view)
+        this.statusService = new StatusService();
+    }
 
-public async loadMoreItems (authToken: AuthToken, userAlias: string) {
+    public async loadMoreItems (authToken: AuthToken, userAlias: string) {
         try {
         const [newItems, hasMore] = await this.statusService.loadMoreFeedItems(
             authToken,
