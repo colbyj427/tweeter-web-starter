@@ -16,12 +16,7 @@ const StatusItemScroller = (props: Props) => {
     const { displayErrorMessage } = useToastListener();
     const [items, setItems] = useState<Status[]>([]);
     const [newItems, setNewItems] = useState<Status[]>([]);
-    const [hasMoreItems, setHasMoreItems] = useState(true);
-    const [lastItem, setLastItem] = useState<Status | null>(null);
     const [changedDisplayedUser, setChangedDisplayedUser] = useState(true);
-
-    const addItems = (newItems: Status[]) =>
-        setNewItems(newItems);
 
     const { displayedUser, authToken } = useUserInfoHook();
 
