@@ -7,6 +7,7 @@ import { AuthToken, FakeData, User } from "tweeter-shared";
 import useToastListener from "../../toaster/ToastListenerHook";
 import AuthFields from "../authFields/AuthFields";
 import useUserInfoHook from "../../userInfo/UserInfoHook";
+import { LoginPresenter, LoginView } from "../../../presenters/LoginPresenter";
 
 interface Props {
   originalUrl?: string;
@@ -26,41 +27,59 @@ const Login = (props: Props) => {
     return !alias || !password;
   };
 
-  const doLogin = async () => {
-    try {
-      setIsLoading(true);
+  // const doLogin = async () => {
+  //   try {
+  //     setIsLoading(true);
 
-      const [user, authToken] = await login(alias, password);
+  //     const [user, authToken] = await login(alias, password);
 
-      updateUserInfo(user, user, authToken, rememberMe);
+  //     updateUserInfo(user, user, authToken, rememberMe);
 
-      if (!!props.originalUrl) {
-        navigate(props.originalUrl);
-      } else {
-        navigate("/");
-      }
-    } catch (error) {
-      displayErrorMessage(
-        `Failed to log user in because of exception: ${error}`
-      );
-    } finally {
-      setIsLoading(false);
+  //     if (!!props.originalUrl) {
+  //       navigate(props.originalUrl);
+  //     } else {
+  //       navigate("/");
+  //     }
+  //   } catch (error) {
+  //     displayErrorMessage(
+  //       `Failed to log user in because of exception: ${error}`
+  //     );
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
+
+  // const login = async (
+  //   alias: string,
+  //   password: string
+  // ): Promise<[User, AuthToken]> => {
+  //   // TODO: Replace with the result of calling the server
+  //   const user = FakeData.instance.firstUser;
+
+  //   if (user === null) {
+  //     throw new Error("Invalid alias or password");
+  //   }
+
+  //   return [user, FakeData.instance.authToken];
+  // };
+
+  const listener: LoginView = {
+    updateUserInfo: (
+      currentUser: User,
+      displayedUser: User | null,
+      authToken: AuthToken,
+      remember: boolean
+    ) => {
+      updateUserInfo(currentUser, displayedUser, authToken, remember);
+    },
+    displayErrorMessage: displayErrorMessage,
+    navigate: (url: string) => {
+      navigate(url);
     }
   };
 
-  const login = async (
-    alias: string,
-    password: string
-  ): Promise<[User, AuthToken]> => {
-    // TODO: Replace with the result of calling the server
-    const user = FakeData.instance.firstUser;
+  const [presenter] = useState(new LoginPresenter(listener));
 
-    if (user === null) {
-      throw new Error("Invalid alias or password");
-    }
-
-    return [user, FakeData.instance.authToken];
-  };
 
   const inputFieldGenerator = () => {
     return (
@@ -71,7 +90,7 @@ const Login = (props: Props) => {
         onAliasChange={setAlias}
         onPasswordChange={setPassword}
         submitButtonStatus={false}
-        function={doLogin}/>
+        function={presenter.doLogin}/>
       </>
     );
   };
@@ -94,7 +113,7 @@ const Login = (props: Props) => {
       setRememberMe={setRememberMe}
       submitButtonDisabled={checkSubmitButtonStatus}
       isLoading={isLoading}
-      submit={doLogin}
+      submit={() => presenter.doLogin(alias, password, rememberMe, props.originalUrl)}
     />
   );
 };
