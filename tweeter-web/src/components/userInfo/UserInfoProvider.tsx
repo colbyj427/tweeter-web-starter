@@ -1,5 +1,5 @@
 import { Context, createContext, useState } from "react";
-import { User, AuthToken, FakeData } from "tweeter-shared";
+import { User, AuthToken } from "tweeter-shared";
 import useToastListener from "../toaster/ToastListenerHook";
 
 const CURRENT_USER_KEY: string = "CurrentUserKey";
