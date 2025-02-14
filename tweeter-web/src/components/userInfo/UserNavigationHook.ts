@@ -1,8 +1,8 @@
-import { useContext } from "react";
-import { AuthToken, FakeData, User } from "tweeter-shared"
+import { useContext, useState } from "react";
+import { AuthToken, User } from "tweeter-shared"
 import { UserInfoContext } from "./UserInfoProvider";
 import useToastListener from "../toaster/ToastListenerHook";
-import { UserService } from "../../model/service/UserService";
+import { UserNavigationView, UserNavigationPresenter } from "../../presenters/UserNavigationPresenter";
 
 interface NavigationHook {
     extractAlias: (value: string) => string;
@@ -14,37 +14,18 @@ const useUserNavigationHook = (): NavigationHook => {
     const { setDisplayedUser, authToken, currentUser } =
     useContext(UserInfoContext);
     const { displayErrorMessage } = useToastListener()
-    const userService = new UserService()
 
-    const navigateToUser = async (event: React.MouseEvent): Promise<void> => {
-        event.preventDefault();
-    
-        try {
-          const alias = extractAlias(event.target.toString());
-    
-          const user = await userService.getUser(authToken!, alias);
-    
-          if (!!user) {
-            if (currentUser!.equals(user)) {
-              setDisplayedUser(currentUser!);
-            } else {
-              setDisplayedUser(user);
-            }
-          }
-        } catch (error) {
-          displayErrorMessage(`Failed to get user because of exception: ${error}`);
-        }
-      };
-
-      const extractAlias = (value: string): string => {
-        const index = value.indexOf("@");
-        return value.substring(index);
-      };
+    const listener: UserNavigationView = {
+      displayErrorMessage: displayErrorMessage,
+      updateDisplayedUser: setDisplayedUser
+    };
+      
+    const [presenter] = useState(new UserNavigationPresenter(listener));
 
     return {
-        extractAlias: extractAlias,
-        getUser: userService.getUser,
-        navigateToUser: navigateToUser
+        extractAlias: presenter.extractAlias,
+        getUser: presenter.userService.getUser,
+        navigateToUser: (event: React.MouseEvent) => presenter.navigateToUser(event, authToken, currentUser)
     };
 }
 

@@ -25,7 +25,7 @@ const PostStatus = () => {
   },
     };
   
-    const [presenter] = useState(new PostStatusPresenter(listener));
+  const [presenter] = useState(new PostStatusPresenter(listener));
 
   return (
     <div className={isLoading ? "loading" : ""}>
