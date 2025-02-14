@@ -24,7 +24,7 @@ const useUserNavigationHook = (): NavigationHook => {
 
     return {
         extractAlias: presenter.extractAlias,
-        getUser: presenter.userService.getUser,
+        getUser: presenter.getUser,
         navigateToUser: (event: React.MouseEvent) => presenter.navigateToUser(event, authToken, currentUser)
     };
 }

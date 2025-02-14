@@ -7,7 +7,7 @@ export interface UserNavigationView {
 }
 
 export class UserNavigationPresenter {
-    public userService: UserService;
+    private userService: UserService;
     private view: UserNavigationView;
 
     public constructor(view: UserNavigationView) {
@@ -39,4 +39,10 @@ export class UserNavigationPresenter {
         const index = value.indexOf("@");
         return value.substring(index);
     };
+
+    public async getUser (authToken: AuthToken, alias: string): Promise<User | null> {
+        return (
+            this.userService.getUser(authToken, alias)
+        )
+    }
 }
