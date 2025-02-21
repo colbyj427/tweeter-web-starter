@@ -1,24 +1,23 @@
 import { AuthToken, User } from "tweeter-shared";
 import { UserService } from "../model/service/UserService";
+import { Presenter, View } from "./Presenter";
 
-export interface UserNavigationView {
-    displayErrorMessage: (message: string) => void,
+export interface UserNavigationView extends View {
     updateDisplayedUser: (user: User) => void;
 }
 
-export class UserNavigationPresenter {
+export class UserNavigationPresenter extends Presenter<UserNavigationView> {
     private userService: UserService;
-    private view: UserNavigationView;
 
     public constructor(view: UserNavigationView) {
-            this.view = view;
-            this.userService = new UserService();
-        }
+        super(view)
+        this.userService = new UserService();
+    }
     
     public async navigateToUser (event: React.MouseEvent, authToken: AuthToken | null, currentUser: User | null): Promise<void> {
         event.preventDefault();
     
-        try {
+        this.doFailureReportingOperation(async () => {
             const alias = this.extractAlias(event.target.toString());
     
             const user = await this.userService.getUser(authToken!, alias);
@@ -30,10 +29,8 @@ export class UserNavigationPresenter {
                 this.view.updateDisplayedUser(user)
             }
             }
-        } catch (error) {
-            this.view.displayErrorMessage(`Failed to get user because of exception: ${error}`);
-        }
-        };
+        }, "get user");
+    };
 
     public extractAlias (value: string): string {
         const index = value.indexOf("@");
