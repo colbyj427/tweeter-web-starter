@@ -7,7 +7,8 @@ import { AuthToken, User } from "tweeter-shared";
 import useToastListener from "../../toaster/ToastListenerHook";
 import AuthFields from "../authFields/AuthFields";
 import useUserInfoHook from "../../userInfo/UserInfoHook";
-import { LoginPresenter, LoginView } from "../../../presenters/LoginPresenter";
+import { LoginPresenter } from "../../../presenters/LoginPresenter";
+import { AuthenticationView } from "../../../presenters/AuthenticationPresenter";
 
 interface Props {
   originalUrl?: string;
@@ -27,7 +28,7 @@ const Login = (props: Props) => {
     return !alias || !password;
   };
 
-  const listener: LoginView = {
+  const listener: AuthenticationView = {
     updateUserInfo: (
       currentUser: User,
       displayedUser: User | null,
@@ -54,7 +55,7 @@ const Login = (props: Props) => {
         onAliasChange={setAlias}
         onPasswordChange={setPassword}
         submitButtonStatus={false}
-        function={presenter.doLogin}/>
+        function={presenter.doAuthenticate}/>
       </>
     );
   };
@@ -77,7 +78,7 @@ const Login = (props: Props) => {
       setRememberMe={setRememberMe}
       submitButtonDisabled={checkSubmitButtonStatus}
       isLoading={isLoading}
-      submit={() => presenter.doLogin(alias, password, rememberMe, props.originalUrl)}
+      submit={() => presenter.doAuthenticate("", "", alias, password, new Uint8Array(), "", rememberMe, props.originalUrl)}
     />
   );
 };

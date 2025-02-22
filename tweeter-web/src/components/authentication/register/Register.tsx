@@ -37,7 +37,7 @@ const Register = () => {
 
   const registerOnEnter = (event: React.KeyboardEvent<HTMLElement>) => {
     if (event.key == "Enter" && !checkSubmitButtonStatus()) {
-      presenter.doRegister(firstName, lastName, alias, password, imageBytes, imageFileExtension, rememberMe);
+      presenter.doAuthenticate(firstName, lastName, alias, password, imageBytes, imageFileExtension, rememberMe, undefined);
     }
   };
 
@@ -98,7 +98,7 @@ const Register = () => {
           onAliasChange={setAlias}
           onPasswordChange={setPassword}
           submitButtonStatus={false}
-          function={presenter.doRegister}/>
+          function={presenter.doAuthenticate}/>
       </>
         <div className="form-floating mb-3">
           <input
@@ -133,7 +133,7 @@ const Register = () => {
       setRememberMe={setRememberMe}
       submitButtonDisabled={checkSubmitButtonStatus}
       isLoading={isLoading}
-      submit={() => presenter.doRegister(firstName, lastName, alias, password, imageBytes, imageFileExtension, rememberMe)}
+      submit={() => presenter.doAuthenticate(firstName, lastName, alias, password, imageBytes, imageFileExtension, rememberMe, undefined)}
     />
   );
 };

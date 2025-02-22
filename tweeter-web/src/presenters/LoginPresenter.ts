@@ -1,40 +1,32 @@
-import { UserService } from "../model/service/UserService";
 import { User, AuthToken } from "tweeter-shared";
-import { Presenter, View } from "./Presenter";
+import { AuthenticationPresenter, AuthenticationView } from "./AuthenticationPresenter";
 
-export interface LoginView extends View{
-    updateUserInfo: (
-        currentUser: User,
-        displayedUser: User | null,
-        authToken: AuthToken,
-        remember: boolean
-      ) => void,
-    navigate: (url: string) => void;
-}
+export class LoginPresenter extends AuthenticationPresenter {
 
-export class LoginPresenter extends Presenter<LoginView> {
-    private userService: UserService;
-    private _isLoading = false;
+  public constructor(view: AuthenticationView) {
+      super(view)
+  }
 
-    public constructor(view: LoginView) {
-        super(view)
-        this.userService = new UserService();
+  protected doAuthentication(
+    firstName: string,
+    lastName: string,
+    alias: string,
+    password: string,
+    imageBytes: Uint8Array,
+    imageFileExtension: string,
+    rememberMe: boolean): Promise<[User, AuthToken]> {
+      return this.service.login( alias, password );
+  }
+
+  protected doNavigation(url: string | undefined): void {
+    if (!!url) {
+      this.view.navigate(url);
+    } else {
+      this.view.navigate("/");
     }
+  }
 
-    public async doLogin (alias: string, password: string, rememberMe: boolean, originalUrl: string | undefined) {
-      this.doFailureReportingOperation(async () => {
-        this._isLoading = true;
-    
-        const [user, authToken] = await this.userService.login(alias, password);
-  
-        this.view.updateUserInfo(user, user, authToken, rememberMe);
-  
-        if (!!originalUrl) {
-          this.view.navigate(originalUrl);
-        } else {
-          this.view.navigate("/");
-        }
-      }, "log user in");
-      this._isLoading = false; //this was the finally
-      };
+  protected getItemDescription(): string {
+    return "log user in";
+  }
 }
