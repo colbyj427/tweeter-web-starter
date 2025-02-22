@@ -40,10 +40,10 @@ export abstract class AuthenticationPresenter extends Presenter<AuthenticationVi
             imageBytes,
             imageFileExtension,
             rememberMe,
-          );
+        );
     
-          this.view.updateUserInfo(user, user, authToken, rememberMe);
-          this.doNavigation(originalUrl);
+        this.view.updateUserInfo(user, user, authToken, rememberMe);
+        this.doNavigation(originalUrl);
         }, this.getItemDescription());
         this._isLoading = false //the finally
       };
