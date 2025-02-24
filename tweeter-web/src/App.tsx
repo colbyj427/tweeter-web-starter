@@ -19,6 +19,12 @@ import { FollowerPresenter } from "./presenters/FollowerPresenter";
 import { StoryPresenter } from "./presenters/StoryPresenter";
 import { StatusItemView } from "./presenters/StatusItemPresenter";
 import { FeedPresenter } from "./presenters/FeedPresenter";
+import UserItem from "./components/userItem/UserItem";
+import ItemScroller from "./components/mainLayout/ItemScroller";
+import { PagedItemPresenter, PagedItemView } from "./presenters/PagedItemPresenter";
+import { Status } from "tweeter-shared";
+import { UserService } from "./model/service/UserService";
+import StatusItem from "./components/statusItem/statusItem";
 
 const App = () => {
   const { currentUser, authToken } = useUserInfoHook();
@@ -49,12 +55,16 @@ const AuthenticatedRoutes = () => {
     <Routes>
       <Route element={<MainLayout />}>
         <Route index element={<Navigate to="/feed" />} />
-        <Route 
+        <Route
           path="feed" 
           element={
-          <StatusItemScroller 
+          <ItemScroller 
           key={3}
-          presenterGenerator={(view: StatusItemView) => new FeedPresenter(view)}
+          presenterGenerator={(view: PagedItemView<Status>) => new StoryPresenter(view)}
+          //add the itemGenerator
+          //itemGenerator={(view: PagedItemView<Status>) => StatusItem}
+          itemComponent={StatusItem}
+          //something like this?
           />
           } 
           />

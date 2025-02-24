@@ -5,17 +5,25 @@ import useToastListener from "../toaster/ToastListenerHook";
 import StatusItem from "../statusItem/statusItem";
 import useUserInfoHook from "../userInfo/UserInfoHook";
 import { StatusItemView, StatusItemPresenter } from "../../presenters/StatusItemPresenter";
+import { PagedItemPresenter, PagedItemView } from "../../presenters/PagedItemPresenter";
+import { View } from "../../presenters/Presenter";
 
+export const PAGE_SIZE = 10;
 
-interface Props {
-  presenterGenerator: (view: StatusItemView) => StatusItemPresenter;
+interface Props<T,U> {
+  presenterGenerator: (view: PagedItemView<T>) => StatusItemPresenter;
+  //itemGenerator: (item: T) => JSX.Element;
+  //itemGenerator: (view: PagedItemView<T>) => T;
+  itemComponent: React.ComponentType<{ value: T }>;
 }
 
-const StatusItemScroller = (props: Props) => {
+//T - status or user type. U - service?
+const ItemScroller = <T,U>(props: Props<T,U>) => {
     const { displayErrorMessage } = useToastListener();
-    const [items, setItems] = useState<Status[]>([]);
-    const [newItems, setNewItems] = useState<Status[]>([]);
+    const [items, setItems] = useState<T[]>([]); //#######
+    const [newItems, setNewItems] = useState<T[]>([]); //#######
     const [changedDisplayedUser, setChangedDisplayedUser] = useState(true);
+
     const { displayedUser, authToken } = useUserInfoHook();
 
     // Initialize the component whenever the displayed user changes
@@ -45,11 +53,11 @@ const StatusItemScroller = (props: Props) => {
         presenter.reset();
     }
 
-    const listener: StatusItemView = { //#######
-        addItems: (newItems: Status[]) => //######
-        setNewItems(newItems),
+    const listener: PagedItemView<T> = { //#######
+        addItems: (newItems: T[]) => //#####
+          setNewItems(newItems),
         displayErrorMessage: displayErrorMessage
-    }
+      }
 
     const [presenter] = useState(props.presenterGenerator(listener));
 
@@ -57,6 +65,8 @@ const StatusItemScroller = (props: Props) => {
         presenter.loadMoreItems(authToken!, displayedUser!.alias)
         setChangedDisplayedUser(false)
     };
+
+    const ItemComponent = props.itemComponent;
 
     return (
         <div className="container px-0 overflow-visible vh-100">
@@ -72,12 +82,12 @@ const StatusItemScroller = (props: Props) => {
                 key={index}
                 className="row mb-3 mx-0 px-0 border rounded bg-white"
             >
-                <StatusItem value={item}/>
-            </div>
+                <ItemComponent value={item}/>
+            </div> 
             ))}
         </InfiniteScroll>
         </div>
     );
 }
 
-export default StatusItemScroller
+export default ItemScroller
