@@ -22,7 +22,7 @@ import { FeedPresenter } from "./presenters/FeedPresenter";
 import UserItem from "./components/userItem/UserItem";
 import ItemScroller from "./components/mainLayout/ItemScroller";
 import { PagedItemPresenter, PagedItemView } from "./presenters/PagedItemPresenter";
-import { Status } from "tweeter-shared";
+import { Status, User } from "tweeter-shared";
 import { UserService } from "./model/service/UserService";
 import StatusItem from "./components/statusItem/statusItem";
 
@@ -61,37 +61,40 @@ const AuthenticatedRoutes = () => {
           <ItemScroller 
           key={3}
           presenterGenerator={(view: PagedItemView<Status>) => new StoryPresenter(view)}
-          //add the itemGenerator
-          //itemGenerator={(view: PagedItemView<Status>) => StatusItem}
           itemComponent={StatusItem}
-          //something like this?
           />
           } 
           />
         <Route 
           path="story" 
           element={
-          <StatusItemScroller 
+          <ItemScroller 
           key={4}
-          presenterGenerator={(view: StatusItemView) => new StoryPresenter(view)}
+          //presenterGenerator={(view: StatusItemView) => new StoryPresenter(view)}
+          presenterGenerator={(view: PagedItemView<Status>) => new StoryPresenter(view)}
+          itemComponent={StatusItem}
           />
           }
           />
         <Route
           path="followees"
           element={
-            <UserItemScroller
+            <ItemScroller
               key={1}
-              presenterGenerator={(view: UserItemView) => new FolloweePresenter(view)}
+              //presenterGenerator={(view: UserItemView) => new FolloweePresenter(view)}
+              presenterGenerator={(view: PagedItemView<User>) => new FolloweePresenter(view)}
+              itemComponent={UserItem}
             />
           }
         />
         <Route
           path="followers"
           element={
-            <UserItemScroller
+            <ItemScroller
               key={2} 
-              presenterGenerator={(view: UserItemView) => new FollowerPresenter(view)}
+              //presenterGenerator={(view: UserItemView) => new FollowerPresenter(view)}
+              presenterGenerator={(view: PagedItemView<User>) => new FollowerPresenter(view)}
+              itemComponent={UserItem}
             />
           }
         />

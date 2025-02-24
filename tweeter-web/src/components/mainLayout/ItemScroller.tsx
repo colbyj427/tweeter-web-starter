@@ -11,7 +11,7 @@ import { View } from "../../presenters/Presenter";
 export const PAGE_SIZE = 10;
 
 interface Props<T,U> {
-  presenterGenerator: (view: PagedItemView<T>) => StatusItemPresenter;
+  presenterGenerator: (view: PagedItemView<T>) => PagedItemPresenter<T,U>;
   //itemGenerator: (item: T) => JSX.Element;
   //itemGenerator: (view: PagedItemView<T>) => T;
   itemComponent: React.ComponentType<{ value: T }>;
