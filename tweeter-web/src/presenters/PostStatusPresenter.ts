@@ -7,13 +7,24 @@ export interface PostStatusView extends MessageView{
 }
 
 export class PostStatusPresenter extends Presenter<PostStatusView> {
-    private service: StatusService;
-    private post: string = "";
+    private _service: StatusService;
+    private _post: string = "";
     private isLoading: boolean = false;
 
     public constructor(view: PostStatusView) {
         super(view)
-        this.service = new StatusService();
+        this._service = new StatusService();
+    }
+
+    public get service() {
+          if(this._service == null) {
+            this._service = new StatusService();
+          }
+          return this._service;
+        }
+      
+    public get post() {
+      return this._post
     }
 
     public async submitPost (event: React.MouseEvent, currentUser: User | null, authToken: AuthToken | null) {
@@ -27,7 +38,7 @@ export class PostStatusPresenter extends Presenter<PostStatusView> {
   
         await this.service.postStatus(authToken!, status);
   
-        this.post = ""
+        this._post = ""
         this.view.updatePost("")
         this.view.displayInfoMessage("Status posted!", 2000);
       }, "post the status")
@@ -37,7 +48,7 @@ export class PostStatusPresenter extends Presenter<PostStatusView> {
 
     public clearPost = (event: React.MouseEvent) => {
         event.preventDefault();
-        this.post = ""
+        this._post = ""
         this.view.updatePost("")
     };
 }
