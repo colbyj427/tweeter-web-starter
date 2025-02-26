@@ -4,6 +4,7 @@ import { MessageView, Presenter } from "./Presenter";
 
 export interface PostStatusView extends MessageView{
     updatePost: (post: string) => void;
+    clearPost: () => void;
 }
 
 export class PostStatusPresenter extends Presenter<PostStatusView> {
@@ -39,16 +40,16 @@ export class PostStatusPresenter extends Presenter<PostStatusView> {
         await this.service.postStatus(authToken!, status);
   
         this._post = ""
-        this.view.updatePost("")
+        this.view.clearPost()
         this.view.displayInfoMessage("Status posted!", 2000);
       }, "post the status")
       this.view.clearLastInfoMessage(); //this is the finally
       this.isLoading = false;
     };
 
-    public clearPost = (event: React.MouseEvent) => {
-        event.preventDefault();
-        this._post = ""
-        this.view.updatePost("")
-    };
+    // public clearPost = (event: React.MouseEvent) => {
+    //     event.preventDefault();
+    //     this._post = ""
+    //     this.view.updatePost("")
+    // };
 }

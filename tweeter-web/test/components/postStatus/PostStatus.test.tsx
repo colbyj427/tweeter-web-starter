@@ -64,13 +64,14 @@ describe("PostStatus component", () => {
         const mockPresenter = mock<PostStatusPresenter>();
         const mockPresenterInstance = instance(mockPresenter);
         
-        const post = "mypost"
         const { postButton, postField, user } = renderPostStatusAndGetElement(mockPresenterInstance);
+        const { currentUser, authToken } = useUserInfoHook();
 
+        const post = "mypost"
         await user.type(postField, post);
         await user.click(postButton);
 
-        verify(mockPresenter.submitPost(anything(), anything(), anything())).once();
+        verify(mockPresenter.submitPost(anything(), currentUser!, authToken!)).once();
     });
 });
 

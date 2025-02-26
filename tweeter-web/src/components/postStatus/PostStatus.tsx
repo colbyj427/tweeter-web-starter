@@ -26,7 +26,9 @@ const PostStatus = (props: Props) => {
     clearLastInfoMessage: clearLastInfoMessage,
     updatePost: (url: string) => {
       setPost(url);
-  },
+  },clearPost: () => {
+    setPost("");
+  }
     };
   
   const [presenter] = useState(props.presenter ?? new PostStatusPresenter(listener));
@@ -71,7 +73,7 @@ const PostStatus = (props: Props) => {
             className="btn btn-md btn-secondary"
             type="button"
             disabled={checkButtonStatus()}
-            onClick={(event) => presenter.clearPost(event)}
+            onClick={(event) => listener.clearPost()}
           >
             Clear
           </button>

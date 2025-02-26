@@ -52,7 +52,7 @@ describe("PostStatusPresenter", () => {
         await postStatusPresenter.submitPost(mockMouseEvent, user, authToken);
 
         verify(mockPostStatusView.clearLastInfoMessage()).once();
-        //verify(postStatusPresenter.clearPost).once();
+        verify(mockPostStatusView.clearPost()).once();
         verify(mockPostStatusView.displayInfoMessage("Status posted!", 2000)).once();
 
     });
@@ -65,7 +65,7 @@ describe("PostStatusPresenter", () => {
 
         verify(mockPostStatusView.displayErrorMessage("Failed to post the status because of exception: An error occurred")).once();
         verify(mockPostStatusView.clearLastInfoMessage()).once();
-        //does not tell it to clear the post:
+        verify(mockPostStatusView.clearPost()).never();
         verify(mockPostStatusView.displayInfoMessage("Status posted!", 2000)).never();
     });
 });
