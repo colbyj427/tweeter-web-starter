@@ -54,7 +54,7 @@ const AuthenticatedRoutes = () => {
           element={
           <ItemScroller 
           key={3}
-          presenterGenerator={(view: PagedItemView<Status>) => new StoryPresenter(view)}
+          presenterGenerator={(view: PagedItemView<Status>) => new StoryPresenter(view)} //this should be the feed presenter
           itemComponent={StatusItem}
           />
           } 
