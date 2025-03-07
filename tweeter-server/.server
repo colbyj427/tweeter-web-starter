@@ -1,0 +1,6 @@
+BUCKET='colbystweeterbucket'
+LAMBDA_ROLE='arn:aws:iam::050451373472:role/TweeterLambda'
+EDIT_LAMBDALIST='
+tweeterGetFollowees | lambda/follow/GetFolloweesLambda.handler
+'
+LAMBDALAYER_ARN='arn:aws:lambda:us-west-1:050451373472:layer:tweeterLambdaLayer:2'

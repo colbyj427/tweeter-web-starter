@@ -1,3 +1,5 @@
 /node_modules
 /dist
-/node
+/nodejs
+dist.zip
+nodejs.zip
