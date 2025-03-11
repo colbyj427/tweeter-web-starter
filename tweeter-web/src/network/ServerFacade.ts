@@ -1,4 +1,6 @@
 import {
+    GetCountRequest,
+    GetCountResponse,
     IsFollowerRequest,
     IsFollowerResponse,
     PagedUserItemRequest,
@@ -84,6 +86,54 @@ import {
             throw new Error(`No status found`);
           } else {
             return isFollower;
+          }
+        } else {
+          console.error(response);
+          throw new Error(response.message ?? undefined);
+        }
+      }
+
+      public async getFolloweeCount(
+        request: GetCountRequest
+      ): Promise<number> {
+        const response = await this.clientCommunicator.doPost<
+          GetCountRequest,
+          GetCountResponse
+        >(request, "/followeeCount");
+    
+        // Convert the UserDto array returned by ClientCommunicator to a User array
+        const followeeCount: number | null = response.success && response.count ? response.count : null;
+    
+        // Handle errors    
+        if (response.success) {
+          if (followeeCount == null) {
+            throw new Error(`No followee count found`);
+          } else {
+            return followeeCount;
+          }
+        } else {
+          console.error(response);
+          throw new Error(response.message ?? undefined);
+        }
+      }
+
+      public async getFollowerCount(
+        request: GetCountRequest
+      ): Promise<number> {
+        const response = await this.clientCommunicator.doPost<
+          GetCountRequest,
+          GetCountResponse
+        >(request, "/followerCount");
+    
+        // Convert the UserDto array returned by ClientCommunicator to a User array
+        const followerCount: number | null = response.success && response.count ? response.count : null;
+    
+        // Handle errors    
+        if (response.success) {
+          if (followerCount == null) {
+            throw new Error(`No follower count found`);
+          } else {
+            return followerCount;
           }
         } else {
           console.error(response);

@@ -39,23 +39,23 @@ export class FollowService {
   };
 
   public async getFolloweeCount (
-    authToken: AuthToken,
-    user: User
+    token: string,
+    user: UserDto
   ): Promise<number> {
     // TODO: Replace with the result of calling server
     return FakeData.instance.getFolloweeCount(user.alias);
   };
 
   public async getFollowerCount (
-    authToken: AuthToken,
-    user: User
+    token: string,
+    user: UserDto
   ): Promise<number> {
     // TODO: Replace with the result of calling server
     return FakeData.instance.getFollowerCount(user.alias);
   };
 
   public async follow (
-    authToken: AuthToken,
+    authToken: string,
     userToFollow: User
   ): Promise<[followerCount: number, followeeCount: number]> {
     // Pause so we can see the follow message. Remove when connected to the server
@@ -70,7 +70,7 @@ export class FollowService {
   };
 
   public async unfollow (
-    authToken: AuthToken,
+    authToken: string,
     userToUnfollow: User
   ): Promise<[followerCount: number, followeeCount: number]> {
     // Pause so we can see the unfollow message. Remove when connected to the server
