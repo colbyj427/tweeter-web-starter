@@ -44,11 +44,13 @@ export class FollowService {
         selectedUser: User
       ): Promise<boolean> {
         // TODO: Replace with the result of calling server
+        const userAsDto = user.dto;
+        const selectedUserAsDto = selectedUser.dto;
         const req: IsFollowerRequest = {
           token: authToken.token,
           userAlias: user.alias,
-          user: user,
-          selectedUser: selectedUser
+          user: userAsDto,
+          selectedUser: selectedUserAsDto
         };
         return this.facade.getIsFollower(req)
         //return FakeData.instance.isFollower();
