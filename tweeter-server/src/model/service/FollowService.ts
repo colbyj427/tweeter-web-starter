@@ -28,11 +28,13 @@ export class FollowService {
   }
 
   public async getIsFollowerStatus (
-    authToken: AuthToken,
-    user: User,
-    selectedUser: User
+    token: string,
+    user: UserDto,
+    selectedUser: UserDto
   ): Promise<boolean> {
     // TODO: Replace with the result of calling server
+    // const userUser = User.fromDto(user)
+    // const selectedAsUser = User.fromDto(selectedUser)
     return FakeData.instance.isFollower();
   };
 

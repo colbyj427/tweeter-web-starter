@@ -1,4 +1,6 @@
 import {
+    IsFollowerRequest,
+    IsFollowerResponse,
     PagedUserItemRequest,
     PagedUserItemResponse,
     User,
@@ -44,7 +46,7 @@ import {
         const response = await this.clientCommunicator.doPost<
           PagedUserItemRequest,
           PagedUserItemResponse
-        >(request, "/followee/list");
+        >(request, "/follower/list");
     
         // Convert the UserDto array returned by ClientCommunicator to a User array
         const items: User[] | null =
@@ -58,6 +60,30 @@ import {
             throw new Error(`No followees found`);
           } else {
             return [items, response.hasMore];
+          }
+        } else {
+          console.error(response);
+          throw new Error(response.message ?? undefined);
+        }
+      }
+
+      public async getIsFollower(
+        request: IsFollowerRequest
+      ): Promise<boolean> {
+        const response = await this.clientCommunicator.doPost<
+          IsFollowerRequest,
+          IsFollowerResponse
+        >(request, "/isFollower");
+    
+        // Convert the UserDto array returned by ClientCommunicator to a User array
+        const isFollower: boolean | null = response.success ? response.isFollower : null;
+    
+        // Handle errors    
+        if (response.success) {
+          if (isFollower == null) {
+            throw new Error(`No status found`);
+          } else {
+            return isFollower;
           }
         } else {
           console.error(response);

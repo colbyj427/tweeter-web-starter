@@ -1,4 +1,4 @@
-import { AuthToken, User, FakeData, PagedUserItemRequest } from "tweeter-shared";
+import { AuthToken, User, FakeData, PagedUserItemRequest, IsFollowerRequest } from "tweeter-shared";
 import { ServerFacade } from "../../network/ServerFacade";
 
 export class FollowService {
@@ -44,7 +44,14 @@ export class FollowService {
         selectedUser: User
       ): Promise<boolean> {
         // TODO: Replace with the result of calling server
-        return FakeData.instance.isFollower();
+        const req: IsFollowerRequest = {
+          token: authToken.token,
+          userAlias: user.alias,
+          user: user,
+          selectedUser: selectedUser
+        };
+        return this.facade.getIsFollower(req)
+        //return FakeData.instance.isFollower();
       };
 
       public async getFolloweeCount (
