@@ -2,10 +2,14 @@ import {
     FollowActionResponse,
     GetCountRequest,
     GetCountResponse,
+    GetUserResponse,
     IsFollowerRequest,
     IsFollowerResponse,
     PagedUserItemRequest,
     PagedUserItemResponse,
+    PostStatusRequest,
+    TweeterRequest,
+    TweeterResponse,
     User,
     UserDto,
   } from "tweeter-shared";
@@ -16,6 +20,10 @@ import {
   
     private clientCommunicator = new ClientCommunicator(this.SERVER_URL);
   
+    //****************
+    //FOLLOW
+    //****************
+    
     public async getMoreFollowees(
       request: PagedUserItemRequest
     ): Promise<[User[], boolean]> {
@@ -78,7 +86,6 @@ import {
           IsFollowerResponse
         >(request, "/isFollower");
     
-        // Convert the UserDto array returned by ClientCommunicator to a User array
         const isFollower: boolean | null = response.success ? response.isFollower : null;
     
         // Handle errors    
@@ -102,7 +109,6 @@ import {
           GetCountResponse
         >(request, "/followeeCount");
     
-        // Convert the UserDto array returned by ClientCommunicator to a User array
         const followeeCount: number | null = response.success && response.count ? response.count : null;
     
         // Handle errors    
@@ -126,7 +132,6 @@ import {
           GetCountResponse
         >(request, "/followerCount");
     
-        // Convert the UserDto array returned by ClientCommunicator to a User array
         const followerCount: number | null = response.success && response.count ? response.count : null;
     
         // Handle errors    
@@ -150,7 +155,6 @@ import {
           FollowActionResponse
         >(request, "/follow");
     
-        // Convert the UserDto array returned by ClientCommunicator to a User array
         const [followerCount, followeeCount]: [number, number] | [null, null] = response.success ? [response.followerCount, response.followeeCount] : [null, null];
     
         // Handle errors    
@@ -174,7 +178,6 @@ import {
           FollowActionResponse
         >(request, "/unfollow");
     
-        // Convert the UserDto array returned by ClientCommunicator to a User array
         const [followerCount, followeeCount]: [number, number] | [null, null] = response.success ? [response.followerCount, response.followeeCount] : [null, null];
     
         // Handle errors    
@@ -190,5 +193,51 @@ import {
         }
       }
 
-      
+      //****************
+      //STATUS
+      //****************
+
+      public async postStatus(
+        request: PostStatusRequest
+      ): Promise<void> {
+        const response = await this.clientCommunicator.doPost<
+          PostStatusRequest,
+          TweeterResponse
+        >(request, "/postStatus");
+        
+        // Handle errors    
+        if (!response.success) {
+            console.error(response);
+            throw new Error(response.message ?? undefined);
+        }
+      }
+
+      //****************
+      //USER
+      //****************
+
+    public async getUser(
+    request: TweeterRequest
+    ): Promise<User | null> {
+        const response = await this.clientCommunicator.doPost<
+            TweeterRequest,
+            GetUserResponse
+        >(request, "/getUser");
+
+        // Convert the UserDto returned by ClientCommunicator to a User
+        const item: User | null =
+        response.success && response.user ? User.fromDto(response.user) : null;
+        
+        // Handle errors    
+        if (response.success) {
+            if (item == null) {
+                throw new Error(`No user found`);
+            } else {
+                return item;
+            }
+        } else {
+            console.error(response);
+            throw new Error(response.message ?? undefined);
+        }
+    }
   }
