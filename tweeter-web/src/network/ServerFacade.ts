@@ -1,4 +1,5 @@
 import {
+    FollowActionResponse,
     GetCountRequest,
     GetCountResponse,
     IsFollowerRequest,
@@ -140,4 +141,54 @@ import {
           throw new Error(response.message ?? undefined);
         }
       }
+
+      public async follow(
+        request: GetCountRequest
+      ): Promise<[followerCount: number, followeeCount: number]> {
+        const response = await this.clientCommunicator.doPost<
+          GetCountRequest,
+          FollowActionResponse
+        >(request, "/follow");
+    
+        // Convert the UserDto array returned by ClientCommunicator to a User array
+        const [followerCount, followeeCount]: [number, number] | [null, null] = response.success ? [response.followerCount, response.followeeCount] : [null, null];
+    
+        // Handle errors    
+        if (response.success) {
+          if (followerCount == null || followeeCount == null) {
+            throw new Error(`Could not follow`);
+          } else {
+            return [followerCount, followeeCount];
+          }
+        } else {
+          console.error(response);
+          throw new Error(response.message ?? undefined);
+        }
+      }
+
+      public async unfollow(
+        request: GetCountRequest
+      ): Promise<[followerCount: number, followeeCount: number]> {
+        const response = await this.clientCommunicator.doPost<
+          GetCountRequest,
+          FollowActionResponse
+        >(request, "/unfollow");
+    
+        // Convert the UserDto array returned by ClientCommunicator to a User array
+        const [followerCount, followeeCount]: [number, number] | [null, null] = response.success ? [response.followerCount, response.followeeCount] : [null, null];
+    
+        // Handle errors    
+        if (response.success) {
+          if (followerCount == null || followeeCount == null) {
+            throw new Error(`Could not unfollow`);
+          } else {
+            return [followerCount, followeeCount];
+          }
+        } else {
+          console.error(response);
+          throw new Error(response.message ?? undefined);
+        }
+      }
+
+      
   }

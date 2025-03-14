@@ -95,10 +95,17 @@ export class FollowService {
     
         // TODO: Call the server
     
-        const followerCount = await this.getFollowerCount(authToken, userToFollow);
-        const followeeCount = await this.getFolloweeCount(authToken, userToFollow);
+        //const followerCount = await this.getFollowerCount(authToken, userToFollow);
+        //const followeeCount = await this.getFolloweeCount(authToken, userToFollow);
     
-        return [followerCount, followeeCount];
+        const userAsDto = userToFollow.dto;
+        const req: GetCountRequest = {
+          token: authToken.token,
+          userAlias: userToFollow.alias,
+          user: userAsDto,
+        };
+        return this.facade.follow(req)
+        //return [followerCount, followeeCount];
       };
 
       public async unfollow (
@@ -109,10 +116,17 @@ export class FollowService {
         await new Promise((f) => setTimeout(f, 2000));
     
         // TODO: Call the server
+        const userAsDto = userToUnfollow.dto;
+        const req: GetCountRequest = {
+          token: authToken.token,
+          userAlias: userToUnfollow.alias,
+          user: userAsDto,
+        };
+        return this.facade.unfollow(req)
+
+        // const followerCount = await this.getFollowerCount(authToken, userToUnfollow);
+        // const followeeCount = await this.getFolloweeCount(authToken, userToUnfollow);
     
-        const followerCount = await this.getFollowerCount(authToken, userToUnfollow);
-        const followeeCount = await this.getFolloweeCount(authToken, userToUnfollow);
-    
-        return [followerCount, followeeCount];
+        // return [followerCount, followeeCount];
       };
 }
