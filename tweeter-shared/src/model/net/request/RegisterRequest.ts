@@ -1,6 +1,10 @@
-import { UserDto } from "../../dto/UserDto";
 import { LoginRequest } from "./LoginRequest";
 
 export interface RegisterRequest extends LoginRequest {
-    readonly user: UserDto
+    readonly firstName: string,
+    readonly lastName: string,
+    readonly alias: string,
+    readonly password: string,
+    readonly imageBytes: string,
+    readonly imageFileExtension: string
 }
