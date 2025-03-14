@@ -1,10 +1,13 @@
 import {
+    AuthToken,
     FollowActionResponse,
     GetCountRequest,
     GetCountResponse,
     GetUserResponse,
     IsFollowerRequest,
     IsFollowerResponse,
+    LoginRegisterResponse,
+    LoginRequest,
     PagedUserItemRequest,
     PagedUserItemResponse,
     PostStatusRequest,
@@ -255,4 +258,30 @@ import {
             throw new Error(response.message ?? undefined);
         }
     }
+
+    public async login(
+        request: LoginRequest
+        ): Promise<[User, AuthToken]> {
+            const response = await this.clientCommunicator.doPost<
+                LoginRequest,
+                LoginRegisterResponse
+            >(request, "/login");
+    
+            // Convert the UserDto returned by ClientCommunicator to a User
+            const [user, token]: [User | null , string | null] =
+            response.success && response.user ? [User.fromDto(response.user), response.token] : [null, null];
+            
+            // Handle errors    
+            if (response.success) {
+                if (user == null || token == null) {
+                    throw new Error(`No user found`);
+                } else {
+                    const auth = new AuthToken(token, Date.now())
+                    return [user, auth];
+                }
+            } else {
+                console.error(response);
+                throw new Error(response.message ?? undefined);
+            }
+        }
   }

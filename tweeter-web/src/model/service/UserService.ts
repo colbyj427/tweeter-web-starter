@@ -1,5 +1,5 @@
 import { Buffer } from "buffer";
-import { User, AuthToken, FakeData, TweeterRequest } from "tweeter-shared";
+import { User, AuthToken, FakeData, TweeterRequest, LoginRequest } from "tweeter-shared";
 import { ServerFacade } from "../../network/ServerFacade";
 
 export class UserService {
@@ -16,7 +16,14 @@ export class UserService {
           throw new Error("Invalid alias or password");
         }
     
-        return [user, FakeData.instance.authToken];
+        //return [user, FakeData.instance.authToken];
+        const req: LoginRequest = {
+          token: "undefined",
+          userAlias: "undefined",
+          alias: alias,
+          password: password
+        };
+        return this.facade.login(req)
       };
 
     public async register (

@@ -24,6 +24,8 @@ export type { IsFollowerRequest } from "./model/net/request/IsFollowerRequest"
 export type { GetCountRequest } from "./model/net/request/GetCountRequest"
 export type { PagedStatusItemRequest } from "./model/net/request/PagedStatusItemRequest"
 export type { PostStatusRequest } from "./model/net/request/PostStatusRequest"
+export type { LoginRequest } from "./model/net/request/LoginRequest"
+export type { RegisterRequest } from "./model/net/request/RegisterRequest"
 
 //
 //Responses
@@ -34,6 +36,7 @@ export type { IsFollowerResponse } from "./model/net/response/IsFollowerResponse
 export type { GetCountResponse } from "./model/net/response/GetCountResponse"
 export type { FollowActionResponse } from "./model/net/response/FollowActionResponse"
 export type { GetUserResponse } from "./model/net/response/GetUserResponse"
+export type { LoginRegisterResponse } from "./model/net/response/LoginRegisterResponse"
 
 //
 //Other
