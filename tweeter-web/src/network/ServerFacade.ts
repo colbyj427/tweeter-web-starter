@@ -240,4 +240,19 @@ import {
             throw new Error(response.message ?? undefined);
         }
     }
+
+    public async logout(
+        request: TweeterRequest
+        ): Promise<void> {
+            const response = await this.clientCommunicator.doPost<
+                TweeterRequest,
+                TweeterResponse
+            >(request, "/logout");
+    
+            // Handle errors    
+        if (!response.success) {
+            console.error(response);
+            throw new Error(response.message ?? undefined);
+        }
+    }
   }
