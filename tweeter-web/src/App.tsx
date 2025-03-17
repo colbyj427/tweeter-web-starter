@@ -19,6 +19,7 @@ import ItemScroller from "./components/mainLayout/ItemScroller";
 import { PagedItemView } from "./presenters/PagedItemPresenter";
 import { Status, User } from "tweeter-shared";
 import StatusItem from "./components/statusItem/statusItem";
+import { FeedPresenter } from "./presenters/FeedPresenter";
 
 const App = () => {
   const { currentUser, authToken } = useUserInfoHook();
@@ -54,7 +55,7 @@ const AuthenticatedRoutes = () => {
           element={
           <ItemScroller 
           key={3}
-          presenterGenerator={(view: PagedItemView<Status>) => new StoryPresenter(view)} //this should be the feed presenter
+          presenterGenerator={(view: PagedItemView<Status>) => new FeedPresenter(view)} //this should be the feed presenter
           itemComponent={StatusItem}
           />
           } 

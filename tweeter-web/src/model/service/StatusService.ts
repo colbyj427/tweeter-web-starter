@@ -29,8 +29,15 @@ export class StatusService {
         lastItem: Status | null
       ): Promise<[Status[], boolean]> {
         // TODO: Replace with the result of calling server
+        const req: PagedStatusItemRequest = {
+          token: authToken.token,
+          userAlias: userAlias,
+          pageSize: pageSize,
+          lastItem: lastItem ? lastItem.dto : null
+        };
 
-        return FakeData.instance.getPageOfStatuses(lastItem, pageSize);
+        return this.facade.getMoreFeedItems(req)
+        //return FakeData.instance.getPageOfStatuses(lastItem, pageSize);
       };
 
       public async postStatus (
