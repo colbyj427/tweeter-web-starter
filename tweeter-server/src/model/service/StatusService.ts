@@ -2,13 +2,14 @@ import { AuthToken, FakeData, Status, StatusDto } from "tweeter-shared";
 
 export class StatusService {
     public async loadMoreStoryItems (
-        authToken: AuthToken,
+        authToken: string,
         userAlias: string,
         pageSize: number,
-        lastItem: Status | null
-      ): Promise<[Status[], boolean]> {
+        lastItem: StatusDto | null
+      ): Promise<[StatusDto[], boolean]> {
         // TODO: Replace with the result of calling server
-        return FakeData.instance.getPageOfStatuses(lastItem, pageSize);
+        return this.getFakeData(lastItem, pageSize, userAlias)
+        //return FakeData.instance.getPageOfStatuses(lastItem, pageSize);
       };
     
       public async loadMoreFeedItems (
@@ -20,6 +21,12 @@ export class StatusService {
         // TODO: Replace with the result of calling server
         return FakeData.instance.getPageOfStatuses(lastItem, pageSize);
       };
+
+      private async getFakeData(lastItem: StatusDto | null, pageSize: number, userAlias: string): Promise<[StatusDto[], boolean]> {
+        const [items, hasMore] = FakeData.instance.getPageOfStatuses(Status.fromDto(lastItem), pageSize);
+        const dtos = items.map((status) => status.dto);
+        return [dtos, hasMore];
+      }
 
       public async postStatus (
         token: string,

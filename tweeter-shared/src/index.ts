@@ -37,6 +37,7 @@ export type { GetCountResponse } from "./model/net/response/GetCountResponse"
 export type { FollowActionResponse } from "./model/net/response/FollowActionResponse"
 export type { GetUserResponse } from "./model/net/response/GetUserResponse"
 export type { LoginRegisterResponse } from "./model/net/response/LoginRegisterResponse"
+export type { PagedStatusItemResponse } from "./model/net/response/PagedStatusItemResponse"
 
 //
 //Other
