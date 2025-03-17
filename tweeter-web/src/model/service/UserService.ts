@@ -1,5 +1,5 @@
 import { Buffer } from "buffer";
-import { User, AuthToken, FakeData, TweeterRequest, LoginRequest } from "tweeter-shared";
+import { User, AuthToken, FakeData, TweeterRequest, LoginRequest, RegisterRequest } from "tweeter-shared";
 import { ServerFacade } from "../../network/ServerFacade";
 
 export class UserService {
@@ -44,8 +44,20 @@ export class UserService {
         if (user === null) {
           throw new Error("Invalid registration");
         }
+
+        const req: RegisterRequest = {
+          token: "undefined",
+          userAlias: "undefined",
+          firstName: firstName,
+          lastName: lastName,
+          alias: alias,
+          password: password,
+          imageBytes: imageStringBase64,
+          imageFileExtension: imageFileExtension
+        };
+        return this.facade.register(req)
     
-        return [user, FakeData.instance.authToken];
+        // return [user, FakeData.instance.authToken];
       };
 
       public async logout (authToken: AuthToken): Promise<void> {

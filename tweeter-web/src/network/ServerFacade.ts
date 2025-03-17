@@ -11,6 +11,7 @@ import {
     PagedUserItemRequest,
     PagedUserItemResponse,
     PostStatusRequest,
+    RegisterRequest,
     TweeterRequest,
     TweeterResponse,
     User,
@@ -260,28 +261,54 @@ import {
     }
 
     public async login(
-        request: LoginRequest
-        ): Promise<[User, AuthToken]> {
-            const response = await this.clientCommunicator.doPost<
-                LoginRequest,
-                LoginRegisterResponse
-            >(request, "/login");
-    
-            // Convert the UserDto returned by ClientCommunicator to a User
-            const [user, token]: [User | null , string | null] =
-            response.success && response.user ? [User.fromDto(response.user), response.token] : [null, null];
-            
-            // Handle errors    
-            if (response.success) {
-                if (user == null || token == null) {
-                    throw new Error(`No user found`);
-                } else {
-                    const auth = new AuthToken(token, Date.now())
-                    return [user, auth];
-                }
+    request: LoginRequest
+    ): Promise<[User, AuthToken]> {
+        const response = await this.clientCommunicator.doPost<
+            LoginRequest,
+            LoginRegisterResponse
+        >(request, "/login");
+
+        // Convert the UserDto returned by ClientCommunicator to a User
+        const [user, token]: [User | null , string | null] =
+        response.success && response.user ? [User.fromDto(response.user), response.token] : [null, null];
+        
+        // Handle errors    
+        if (response.success) {
+            if (user == null || token == null) {
+                throw new Error(`No user found`);
             } else {
-                console.error(response);
-                throw new Error(response.message ?? undefined);
+                const auth = new AuthToken(token, Date.now())
+                return [user, auth];
             }
+        } else {
+            console.error(response);
+            throw new Error(response.message ?? undefined);
         }
+    }
+
+    public async register(
+    request: RegisterRequest
+    ): Promise<[User, AuthToken]> {
+        const response = await this.clientCommunicator.doPost<
+            RegisterRequest,
+            LoginRegisterResponse
+        >(request, "/register");
+
+        // Convert the UserDto returned by ClientCommunicator to a User
+        const [user, token]: [User | null , string | null] =
+        response.success && response.user ? [User.fromDto(response.user), response.token] : [null, null];
+        
+        // Handle errors    
+        if (response.success) {
+            if (user == null || token == null) {
+                throw new Error(`Couldn't create user`);
+            } else {
+                const auth = new AuthToken(token, Date.now())
+                return [user, auth];
+            }
+        } else {
+            console.error(response);
+            throw new Error(response.message ?? undefined);
+        }
+    }
   }
