@@ -356,7 +356,7 @@ import {
             ? response.items.map((dto) => Status.fromDto(dto) as Status)
             : null;
     
-            // Handle errors    
+            // Handle errors
             if (response.success) {
                 if (items == null) {
                     throw new Error(`No feed items found`);

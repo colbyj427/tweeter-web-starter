@@ -5,10 +5,6 @@ import "isomorphic-fetch"
 describe("ServerFacade", () => {
     const serverFacade = new ServerFacade();
 
-    // beforeEach(() => {
-            
-    // });
-
     it("successfully registers a user", async () => {
         const req: RegisterRequest = {
             token: "testToken",
