@@ -15,7 +15,7 @@ export class FollowService {
           token: authToken.token,
           userAlias: userAlias,
           pageSize: pageSize,
-          lastItem: lastItem
+          lastItem: lastItem ? lastItem.dto : null
         };
         return this.facade.getMoreFollowers(req);
         //return FakeData.instance.getPageOfUsers(lastItem, pageSize, userAlias);
@@ -32,7 +32,7 @@ export class FollowService {
           token: authToken.token,
           userAlias: userAlias,
           pageSize: pageSize,
-          lastItem: lastItem
+          lastItem: lastItem ? lastItem.dto : null
         };
         return this.facade.getMoreFollowees(req);
         //return FakeData.instance.getPageOfUsers(lastItem, pageSize, userAlias);
