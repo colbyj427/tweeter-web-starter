@@ -1,6 +1,7 @@
 import { Buffer } from "buffer";
-import { FakeData, UserDto } from "tweeter-shared";
+import { FakeData, User, UserDto } from "tweeter-shared";
 import { UserDaoInterface } from "../Daos/UserDaoInterface";
+import { UserEntity } from "../Entity/User"
 
 export class UserService {
   private dao: UserDaoInterface;
@@ -34,14 +35,29 @@ export class UserService {
         // Not neded now, but will be needed when you make the request to the server in milestone 3
         const imageStringBase64: string =
           Buffer.from(userImageBytes).toString("base64");
-    
+
         // TODO: Replace with the result of calling the server
-        const user = FakeData.instance.firstUser;
-    
+        //const user = FakeData.instance.firstUser;
+        const imageUrl = "imageurlstring";
+        const userEntity = new UserEntity(
+          firstName,
+          lastName,
+          alias,
+          password,
+          imageUrl
+        )
+        await this.dao.put(userEntity)
+        const user = await this.dao.get(userEntity);
         if (user === null) {
           throw new Error("Invalid registration");
         }
-        const userDto = user.dto
+        let toDto = new User(
+          user.firstName,
+          user.lastName,
+          user.alias,
+          user.imageUrl
+        )
+        const userDto = toDto.dto
         return [userDto, FakeData.instance.authToken.token];
       };
 

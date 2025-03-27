@@ -1,4 +1,4 @@
-export class User {
+export class UserEntity {
     firstName;
     lastName;
     alias;
@@ -34,5 +34,5 @@ export class User {
           this.imageUrl +
           "}"
         );
-      }
+    }
 }

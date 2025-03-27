@@ -1,8 +1,8 @@
-import { User } from "../Entity/User";
+import { UserEntity } from "../Entity/User";
 
 export interface UserDaoInterface {
-        put(user: User): Promise<void>;
-        get(user: User): Promise<User | null>;
-        update(oldUser: User, newUser: User): Promise<void>;
-        delete(user: User): Promise<void>;
+        put(user: UserEntity): Promise<void>;
+        get(user: UserEntity): Promise<UserEntity | null>;
+        update(oldUser: UserEntity, newUser: UserEntity): Promise<void>;
+        delete(user: UserEntity): Promise<void>;
 }
