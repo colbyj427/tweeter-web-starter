@@ -1,7 +1,14 @@
 import { Buffer } from "buffer";
-import { User, AuthToken, FakeData, UserDto } from "tweeter-shared";
+import { FakeData, UserDto } from "tweeter-shared";
+import { UserDaoInterface } from "../Daos/UserDaoInterface";
 
 export class UserService {
+  private dao: UserDaoInterface;
+  
+  constructor(dao: UserDaoInterface) {
+    this.dao = dao;
+  }
+
     public async login (
         alias: string,
         password: string

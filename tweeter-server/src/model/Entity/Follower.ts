@@ -9,7 +9,6 @@ export class Follower {
       followee_handle: string,
       follower_name: string,
       followee_name: string
-
     ) {
       this.follower_handle = follower_handle;
       this.followee_handle = followee_handle;

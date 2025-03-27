@@ -9,15 +9,16 @@ import {
   import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
   import { Follower } from "../../Entity/Follower";
   import { DataPage } from "../../Entity/DataPage";
+  import { FollowerDao } from "../FollowerDaoInterface";
   
-  export class followerDAO {
+  export class followerDao implements FollowerDao {
     readonly tableName = "follows";
     readonly indexName = "follows_index";
     readonly follower_handleAttr = "follower_handle";
     readonly followee_handleAttr = "followee_handle";
     readonly follower_nameAttr = "follower_name";
     readonly followee_nameAttr = "followee_name";
-  
+
     private readonly client = DynamoDBDocumentClient.from(new DynamoDBClient());
   
   

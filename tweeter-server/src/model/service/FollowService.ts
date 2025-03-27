@@ -1,6 +1,13 @@
-import { AuthToken, User, FakeData, UserDto } from "tweeter-shared";
+import { User, FakeData, UserDto } from "tweeter-shared";
+import { FollowerDao } from "../Daos/FollowerDaoInterface"
 
 export class FollowService {
+  private dao: FollowerDao;
+
+  constructor(dao: FollowerDao) {
+    this.dao = dao;
+  }
+
   public async loadMoreFollowers (
     token: string,
     userAlias: string,
