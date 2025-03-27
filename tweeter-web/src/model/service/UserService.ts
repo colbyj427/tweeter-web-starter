@@ -37,6 +37,7 @@ export class UserService {
         // Not neded now, but will be needed when you make the request to the server in milestone 3
         const imageStringBase64: string =
           Buffer.from(userImageBytes).toString("base64");
+        console.log("********Here are the bytes:" + imageStringBase64)
     
         // TODO: Replace with the result of calling the server
         const user = FakeData.instance.firstUser;

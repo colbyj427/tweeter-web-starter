@@ -1,8 +1,9 @@
 import { PagedStatusItemRequest, PagedStatusItemResponse, PostStatusRequest, TweeterResponse } from "tweeter-shared"
 import { StatusService } from "../../model/service/StatusService";
+import { StatusDao } from "../../model/Daos/DynamoDbDaos/StatusDynamoDbDao"
 
 export const handler = async (request: PagedStatusItemRequest): Promise<PagedStatusItemResponse> => {
-    const statusService = new StatusService
+    const statusService = new StatusService(new StatusDao)
     const [items, hasMore]  = await statusService.loadMoreFeedItems(request.token, request.userAlias, request.pageSize, request.lastItem);
 
     return {

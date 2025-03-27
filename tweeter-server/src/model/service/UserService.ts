@@ -15,12 +15,25 @@ export class UserService {
         password: string
       ): Promise<[UserDto, string]> {
         // TODO: Replace with the result of calling the server
-        const user = FakeData.instance.firstUser;
-        
+        //const user = FakeData.instance.firstUser;
+        const user = await this.dao.get(alias);
+
         if (user === null) {
           throw new Error("Invalid alias or password");
         }
-        const userDto = user.dto
+        //check if the given password matches the one in the database.
+        if (user.password != password) {
+          throw new Error("Incorrect password")
+        }
+
+        let toDto = new User(
+          user.firstName,
+          user.lastName,
+          user.alias,
+          user.imageUrl
+        )
+        
+        const userDto = toDto.dto
         return [userDto, FakeData.instance.authToken.token];
       };
 
@@ -32,13 +45,12 @@ export class UserService {
         userImageBytes: string,
         imageFileExtension: string
       ): Promise<[UserDto, string]> {
-        // Not neded now, but will be needed when you make the request to the server in milestone 3
-        const imageStringBase64: string =
-          Buffer.from(userImageBytes).toString("base64");
 
-        // TODO: Replace with the result of calling the server
-        //const user = FakeData.instance.firstUser;
-        const imageUrl = "imageurlstring";
+        //Put the image in the bucket and get the url
+        //const imageUrl = await this.dao.putImage(alias, userImageBytes);
+        const imageUrl = await this.dao.getImage(alias, userImageBytes);
+
+        //const imageUrl = "imageurlstring";
         const userEntity = new UserEntity(
           firstName,
           lastName,
@@ -47,7 +59,7 @@ export class UserService {
           imageUrl
         )
         await this.dao.put(userEntity)
-        const user = await this.dao.get(userEntity);
+        const user = await this.dao.get(alias);
         if (user === null) {
           throw new Error("Invalid registration");
         }

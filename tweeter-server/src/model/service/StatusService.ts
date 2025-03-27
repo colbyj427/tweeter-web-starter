@@ -1,6 +1,14 @@
-import { AuthToken, FakeData, Status, StatusDto } from "tweeter-shared";
+import { FakeData, Status, StatusDto } from "tweeter-shared";
+import { StatusDaoInterface } from "../Daos/StatusDaoInterface";
+import { StatusEntity } from "../Entity/StatusEntity";
 
 export class StatusService {
+  private dao: StatusDaoInterface;
+  
+  constructor(dao: StatusDaoInterface) {
+    this.dao = dao;
+  }
+
     public async loadMoreStoryItems (
         authToken: string,
         userAlias: string,
@@ -36,6 +44,14 @@ export class StatusService {
         // Pause so we can see the logging out message. Remove when connected to the server
         await new Promise((f) => setTimeout(f, 2000));
     
+        const statusEntity = new StatusEntity(
+          newStatus.user.alias,
+          newStatus.post,
+          newStatus.timestamp
+        )
         // TODO: Call the server to post the status
+        this.dao.putInStory(statusEntity)
+
+        //Next we need to get all the users following this user, and add the story to each of their feeds.
       };
 }
