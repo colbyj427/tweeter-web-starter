@@ -38,14 +38,25 @@ export class UserDynamoDbDao implements UserDaoInterface {
     }
 
     async get(user: UserEntity): Promise<UserEntity | null> {
-        const userEntity = new UserEntity(
-            "firstName",
-            "lastName",
-            "alias",
-            "password",
-            "imageUrl"
-          )
-        return userEntity
+        const params = {
+            TableName: this.tableName,
+            Key: {
+                [this.aliasAttr]: user.alias
+            }
+        };
+        const output = await this.client.send(new GetCommand(params));
+        if (output.Item === undefined) {
+            console.log("user get returned undefined");
+            return null;
+        } else {
+            return new UserEntity(
+                output.Item[this.firstNameAttr],
+                output.Item[this.LastNameAttr],
+                output.Item[this.aliasAttr],
+                output.Item[this.passwordAttr],
+                output.Item[this.imageUrlAttr]
+              )
+        }
     }
 
     async update(oldUser: UserEntity, newUser: UserEntity): Promise<void> {
