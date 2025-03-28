@@ -45,7 +45,7 @@ export class StatusService {
 
         return {
           post: entity.status,
-          user: user,
+          user: user.dto,
           timestamp: entity.timestamp
         }
       }

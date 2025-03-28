@@ -19,7 +19,14 @@ export class FollowService {
     lastItem: UserDto | null
   ): Promise<[UserDto[], boolean]> {
     // TODO: Replace with the result of calling server
-    return this.getFakeData(lastItem, pageSize, userAlias);
+    const isExpired = await this.userDao.getSession(token);
+    if (isExpired) {
+      throw new Error("Must log in again");
+    }
+    let page = await this.dao.getPageOfFollowers(userAlias, pageSize, lastItem?.alias);
+    const dtos = await Promise.all(page.values.map(async (user) => await this.dtoFromFollowerEntity(user)));
+    return [dtos.filter((dto): dto is UserDto => dto !== null), page.hasMorePages];
+    //return this.getFakeData(lastItem, pageSize, userAlias);
   };
 
   public async loadMoreFollowees (
@@ -29,7 +36,14 @@ export class FollowService {
     lastItem: UserDto | null
   ): Promise<[UserDto[], boolean]> {
     // TODO: Replace with the result of calling server
-    return this.getFakeData(lastItem, pageSize, userAlias);
+    const isExpired = await this.userDao.getSession(token);
+    if (isExpired) {
+      throw new Error("Must log in again");
+    }
+    let page = await this.dao.getPageOfFollowees(userAlias, pageSize, lastItem?.alias);
+    const dtos = await Promise.all(page.values.map(async (user) => await this.dtoFromFolloweeEntity(user)));
+    return [dtos.filter((dto): dto is UserDto => dto !== null), page.hasMorePages];
+    //return this.getFakeData(lastItem, pageSize, userAlias);
   };
 
   private async getFakeData(lastItem: UserDto | null, pageSize: number, userAlias: string): Promise<[UserDto[], boolean]> {
@@ -43,7 +57,6 @@ export class FollowService {
     user: UserDto,
     selectedUser: UserDto
   ): Promise<boolean> {
-    // TODO: Replace with the result of calling server
     const isExpired = await this.userDao.getSession(token);
     if (isExpired) {
       throw new Error("Must log in again");
@@ -59,7 +72,6 @@ export class FollowService {
       return false;
     }
     return true;
-    //return FakeData.instance.isFollower();
   };
 
   public async getFolloweeCount (
@@ -171,4 +183,28 @@ export class FollowService {
 
     return [followerCount - 1, followeeCount];
   };
+
+  public async dtoFromFollowerEntity(entity: Follower | null): Promise<UserDto | null> {
+    if (!entity) {
+    return null;
+    }
+    const userEntity = await this.userDao.get(entity.follower_handle);
+    if (userEntity == null) {
+      return null
+    }
+    const user = new User(userEntity.firstName, userEntity.lastName, userEntity.alias, userEntity.imageUrl);
+    return user.dto;
+  }
+
+  public async dtoFromFolloweeEntity(entity: Follower | null): Promise<UserDto | null> {
+    if (!entity) {
+    return null;
+    }
+    const userEntity = await this.userDao.get(entity.followee_handle);
+    if (userEntity == null) {
+      return null
+    }
+    const user = new User(userEntity.firstName, userEntity.lastName, userEntity.alias, userEntity.imageUrl);
+    return user.dto;
+  }
 }

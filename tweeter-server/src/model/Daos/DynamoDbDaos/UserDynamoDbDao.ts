@@ -23,6 +23,7 @@ export class UserDynamoDbDao implements UserDaoInterface {
     readonly imageUrlAttr = "image_url";
     readonly followersAttr = "follower_count";
     readonly followeesAttr = "followee_count";
+    readonly expireAttr = "expires_at"
 
     private readonly client = DynamoDBDocumentClient.from(new DynamoDBClient());
 
@@ -151,15 +152,17 @@ export class UserDynamoDbDao implements UserDaoInterface {
     }
 
     async putSession(token: string, alias: string, timestamp: number): Promise<void> {
-        const params = {
-            TableName: this.sessionsTableName,
-            Item: {
-                [this.authTokenAttr]: token,
-                [this.aliasAttr]: alias,
-                [this.timestampAttr]: timestamp
-            },
-        };
-        await this.client.send(new PutCommand(params));
+      const ttlSeconds = Math.floor(Date.now() / 1000) + 60 * 20;
+      const params = {
+        TableName: this.sessionsTableName,
+        Item: {
+            [this.authTokenAttr]: token,
+            [this.aliasAttr]: alias,
+            [this.timestampAttr]: timestamp,
+            [this.expireAttr]: ttlSeconds
+        },
+      };
+      await this.client.send(new PutCommand(params));
     }
 
     //return if the session is expired or not
@@ -179,6 +182,8 @@ export class UserDynamoDbDao implements UserDaoInterface {
             const isExpired = now - output.Item[this.timestampAttr] > TEN_MINUTES_IN_MS;
             if (!isExpired) {
                 this.updateSession(token, now);
+            } else {
+              this.deleteSession(token);
             }
             return isExpired;
         }
@@ -197,7 +202,7 @@ export class UserDynamoDbDao implements UserDaoInterface {
       } else {
           return output.Item[this.aliasAttr];
       }
-  }
+    }
 
     async updateSession(token: string, timestamp: number): Promise<void> {
         const params = {
@@ -212,4 +217,14 @@ export class UserDynamoDbDao implements UserDaoInterface {
         };
         await this.client.send(new UpdateCommand(params));
     }
+
+    async deleteSession(token: string): Promise<void> {
+      const params = {
+        TableName: this.sessionsTableName,
+        Key: { [this.authTokenAttr]: token},
+      };
+      await this.client.send(new DeleteCommand(params));
+    }
+
+
 }
