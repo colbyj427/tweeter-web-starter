@@ -13,7 +13,9 @@ import {
 
 export class UserDynamoDbDao implements UserDaoInterface {
     readonly tableName = "users";
-    //readonly indexName = "follows_index";
+    readonly sessionsTableName = "sessions";
+    readonly authTokenAttr = "auth_token";
+    readonly timestampAttr = "timestamp";
     readonly firstNameAttr = "first_name";
     readonly LastNameAttr = "last_name";
     readonly aliasAttr = "user_handle";
@@ -64,8 +66,19 @@ export class UserDynamoDbDao implements UserDaoInterface {
         }
     }
 
-    async update(oldUser: UserEntity, newUser: UserEntity): Promise<void> {
-
+    async updateCounts(oldUser: UserEntity, followeeCount: number, followerCount: number): Promise<void> {
+        const params = {
+            TableName: this.tableName,
+        Key: {
+          [this.aliasAttr]: oldUser.alias,
+        },
+        UpdateExpression: "set followee_count = :fn, follower_count = :ln",
+        ExpressionAttributeValues: {
+          ":fn": followeeCount,
+          ":ln": followerCount,
+        },
+        };
+        await this.client.send(new UpdateCommand(params));
     }
 
     async delete(user: UserEntity): Promise<void> {
@@ -103,6 +116,31 @@ export class UserDynamoDbDao implements UserDaoInterface {
         imageStringBase64Encoded: string
       ): Promise<string> {
         return `https://${"colbystweeterbucket"}.s3.${"us-west-1"}.amazonaws.com/image/${"testFile.png"}`
+    }
 
+    async putSession(token: string, alias: string, timestamp: number): Promise<void> {
+        const params = {
+            TableName: this.sessionsTableName,
+            Item: {
+                [this.authTokenAttr]: token,
+                [this.aliasAttr]: alias,
+                [this.timestampAttr]: timestamp
+            },
+        };
+        await this.client.send(new PutCommand(params));
+    }
+
+    async updateSession(token: string, timestamp: number): Promise<void> {
+        const params = {
+            TableName: this.sessionsTableName,
+            Key: {
+                [this.authTokenAttr]: token
+            },
+            UpdateExpression: "set timestamp = :fn",
+            ExpressionAttributeValues: {
+                ":fn": timestamp
+            },
+        };
+        await this.client.send(new UpdateCommand(params));
     }
 }

@@ -70,6 +70,9 @@ export class FollowService {
 
     // TODO: Call the server
 
+    //use the token to get the user alias, get the user
+    //update the numbers and return them.
+
     const followerCount = await this.getFollowerCount(token, userToFollow);
     const followeeCount = await this.getFolloweeCount(token, userToFollow);
 
