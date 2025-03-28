@@ -44,9 +44,22 @@ export class FollowService {
     selectedUser: UserDto
   ): Promise<boolean> {
     // TODO: Replace with the result of calling server
-    // const userUser = User.fromDto(user)
-    // const selectedAsUser = User.fromDto(selectedUser)
-    return FakeData.instance.isFollower();
+    const isExpired = await this.userDao.getSession(token);
+    if (isExpired) {
+      throw new Error("Must log in again");
+    }
+    const newEntity = new Follower(
+      user.alias,
+      selectedUser.alias,
+      user.firstName,
+      selectedUser.firstName
+    )
+    const entity = await this.dao.get(newEntity);
+    if (entity === null) {
+      return false;
+    }
+    return true;
+    //return FakeData.instance.isFollower();
   };
 
   public async getFolloweeCount (
