@@ -32,14 +32,7 @@ export class UserService {
         //make the session
         await this.dao.putSession(token, user.alias, Date.now());
 
-        let toDto = new User(
-          user.firstName,
-          user.lastName,
-          user.alias,
-          user.imageUrl
-        )
-        
-        const userDto = toDto.dto
+        const userDto = this.entityToDto(user);
         return [userDto, token];
       };
 
@@ -74,13 +67,7 @@ export class UserService {
         if (user === null) {
           throw new Error("Invalid registration");
         }
-        let toDto = new User(
-          user.firstName,
-          user.lastName,
-          user.alias,
-          user.imageUrl
-        )
-        const userDto = toDto.dto
+        const userDto = this.entityToDto(userEntity);
         return [userDto, token];
       };
 
@@ -94,7 +81,18 @@ export class UserService {
         alias: string
       ): Promise<UserDto | null> {
         // TODO: Replace with the result of calling server
-        return this.getFakeData(alias)
+        //return this.getFakeData(alias)
+        const isExpired = await this.dao.getSession(token);
+        if (isExpired) {
+          throw new Error("Must log in again");
+        }
+        const userEntity = await this.dao.get(alias);
+        
+        if (userEntity === null) {
+          throw new Error("User does not exist");
+        }
+        const dto = this.entityToDto(userEntity);
+        return dto
       };
 
       private async getFakeData(alias: string): Promise<UserDto | null> {
@@ -104,5 +102,16 @@ export class UserService {
           return dto
         }
         return null
+      }
+
+      private entityToDto(entity: UserEntity): UserDto {
+        let toDto = new User(
+          entity.firstName,
+          entity.lastName,
+          entity.alias,
+          entity.imageUrl
+        )
+        const userDto = toDto.dto;
+        return userDto;
       }
 }

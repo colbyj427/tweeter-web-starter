@@ -15,7 +15,7 @@ export class UserDynamoDbDao implements UserDaoInterface {
     readonly tableName = "users";
     readonly sessionsTableName = "sessions";
     readonly authTokenAttr = "auth_token";
-    readonly timestampAttr = "timestamp";
+    readonly timestampAttr = "time_stamp";
     readonly firstNameAttr = "first_name";
     readonly LastNameAttr = "last_name";
     readonly aliasAttr = "user_handle";
@@ -130,13 +130,35 @@ export class UserDynamoDbDao implements UserDaoInterface {
         await this.client.send(new PutCommand(params));
     }
 
+    //return if the session is expired or not
+    async getSession(token: string): Promise<boolean> {
+        const params = {
+            TableName: this.sessionsTableName,
+            Key: {
+                [this.authTokenAttr]: token,
+            },
+        };
+        const output = await this.client.send(new GetCommand(params));
+        if (output.Item === undefined) {
+            return false;
+        } else {
+            const now = Date.now();
+            const TEN_MINUTES_IN_MS = 10 * 60 * 1000;
+            const isExpired = now - output.Item[this.timestampAttr] > TEN_MINUTES_IN_MS;
+            if (!isExpired) {
+                this.updateSession(token, now);
+            }
+            return isExpired;
+        }
+    }
+
     async updateSession(token: string, timestamp: number): Promise<void> {
         const params = {
             TableName: this.sessionsTableName,
             Key: {
                 [this.authTokenAttr]: token
             },
-            UpdateExpression: "set timestamp = :fn",
+            UpdateExpression: "set time_stamp = :fn",
             ExpressionAttributeValues: {
                 ":fn": timestamp
             },

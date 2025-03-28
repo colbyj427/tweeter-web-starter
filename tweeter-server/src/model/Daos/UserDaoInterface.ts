@@ -8,5 +8,6 @@ export interface UserDaoInterface {
         putImage(fileName: string, imageStringBase64Encoded: string): Promise<string>;
         getImage(fileName: string, imageStringBase64Encoded: string): Promise<string>;
         putSession(token: string, alias: string, timestamp: number): Promise<void>;
+        getSession(token: string): Promise<boolean>;
         updateSession(token: string, timestamp: number): Promise<void>;
 }
