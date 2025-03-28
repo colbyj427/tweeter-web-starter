@@ -1,7 +1,7 @@
 export class StatusEntity {
     user_handle: string;
     status: string;
-    timestamp: number
+    timestamp: number;
   
     constructor(
       user_handle: string,
