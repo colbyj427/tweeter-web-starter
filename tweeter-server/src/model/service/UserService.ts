@@ -3,6 +3,7 @@ import { FakeData, User, UserDto } from "tweeter-shared";
 import { UserDaoInterface } from "../Daos/UserDaoInterface";
 import { UserEntity } from "../Entity/User"
 import crypto from 'crypto';
+import bcrypt from 'bcryptjs';
 
 export class UserService {
   private dao: UserDaoInterface;
@@ -15,8 +16,10 @@ export class UserService {
         alias: string,
         password: string
       ): Promise<[UserDto, string]> {
-        // TODO: Replace with the result of calling the server
-        //const user = FakeData.instance.firstUser;
+        //encrypt the password        
+        // const salt = await bcrypt.genSalt();
+        // const hashedPassword = await bcrypt.hash(password, salt);
+
         const user = await this.dao.get(alias);
 
         if (user === null) {
@@ -44,6 +47,8 @@ export class UserService {
         userImageBytes: string,
         imageFileExtension: string
       ): Promise<[UserDto, string]> {
+        // const salt = await bcrypt.genSalt();
+        // const hashedPassword = await bcrypt.hash(password, salt);
 
         //Put the image in the bucket and get the url
         //const imageUrl = await this.dao.putImage(alias, userImageBytes);
