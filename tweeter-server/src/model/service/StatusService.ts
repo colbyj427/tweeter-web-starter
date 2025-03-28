@@ -23,7 +23,12 @@ export class StatusService {
       ): Promise<[StatusDto[], boolean]> {
         // TODO: Replace with the result of calling server
         //return this.getFakeData(lastItem, pageSize, userAlias)
-        let page = await this.statusDao.getPageOfStory(userAlias, 10, lastItem ? lastItem.timestamp : undefined);
+        const isExpired = await this.userDao.getSession(authToken);
+        if (isExpired) {
+          throw new Error("Must log in again");
+        }
+
+        let page = await this.statusDao.getPageOfStory(userAlias, pageSize, lastItem ? lastItem.timestamp : undefined);
         const dtos = await Promise.all(page.values.map(async (status) => await this.dtoFromEntity(status)));
         return [dtos.filter((dto): dto is StatusDto => dto !== null), page.hasMorePages];
       };
@@ -54,7 +59,11 @@ export class StatusService {
       ): Promise<[StatusDto[], boolean]> {
         // TODO: Replace with the result of calling server
         //return this.getFakeData(lastItem, pageSize, userAlias)
-        let page = await this.statusDao.getPageOfStory(userAlias, 10, lastItem ? lastItem.timestamp : undefined);
+        const isExpired = await this.userDao.getSession(authToken);
+        if (isExpired) {
+          throw new Error("Must log in again");
+        }
+        let page = await this.statusDao.getPageOfFeed(userAlias, pageSize, lastItem ? lastItem.timestamp : undefined);
         const dtos = await Promise.all(page.values.map(async (status) => await this.dtoFromEntity(status)));
         return [dtos.filter((dto): dto is StatusDto => dto !== null), page.hasMorePages];
       };
@@ -69,7 +78,11 @@ export class StatusService {
         token: string,
         newStatus: StatusDto
       ): Promise<void> {
-        // Pause so we can see the logging out message. Remove when connected to the server
+        const isExpired = await this.userDao.getSession(token);
+        if (isExpired) {
+          throw new Error("Must log in again");
+        }
+
         const statusEntity = new StatusEntity(
           newStatus.user.alias,
           newStatus.post,

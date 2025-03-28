@@ -109,9 +109,35 @@ import { DataPage } from "../../Entity/DataPage";
         );
         return new DataPage<StatusEntity>(items, hasMorePages);
     }
-    // async getPageOfFeed(userHandle: string, pageSize: number): Promise<DataPage<StatusEntity>> {
-
-    // }
+    async getPageOfFeed(userHandle: string, pageSize: number, lastStoryStamp: number | undefined): Promise<DataPage<StatusEntity>> {
+      const params = {
+        KeyConditionExpression: this.ownerAttr + " = :v",
+        ExpressionAttributeValues: {
+          ":v": userHandle,
+        },
+        TableName: this.FeedTableName,
+        Limit: pageSize,
+        ExclusiveStartKey:
+          lastStoryStamp === undefined ? undefined : 
+          {
+            [this.ownerAttr]: userHandle,
+            [this.timestampAttr]: lastStoryStamp,
+          },
+      };
+      const items: StatusEntity[] = [];
+      const data = await this.client.send(new QueryCommand(params));
+      const hasMorePages = data.LastEvaluatedKey !== undefined;
+      data.Items?.forEach((item) => 
+        items.push(
+          new StatusEntity(
+            item[this.poster_handleAttr],
+            item[this.statusAttr],
+            item[this.timestampAttr]
+          )
+        )
+      );
+      return new DataPage<StatusEntity>(items, hasMorePages);
+    }
   
     // async get(user: StatusEntity): Promise<StatusEntity | null> {
     //   const params = {

@@ -116,8 +116,11 @@ import {
           GetCountResponse
         >(request, "/followeeCount");
     
-        const followeeCount: number | null = response.success && response.count ? response.count : null;
-    
+        //const followeeCount: number | null = response.success && response.count ? response.count : null;
+        const followeeCount: number | null =
+          response.success && typeof response.count === 'number'
+            ? response.count
+            : null;
         // Handle errors    
         if (response.success) {
           if (followeeCount == null) {
@@ -139,8 +142,11 @@ import {
           GetCountResponse
         >(request, "/followerCount");
     
-        const followerCount: number | null = response.success && response.count ? response.count : null;
-    
+        // const followerCount: number | null = response.success && response.count ? response.count : null;
+        const followerCount: number | null =
+          response.success && typeof response.count === 'number'
+            ? response.count
+            : null;
         // Handle errors    
         if (response.success) {
           if (followerCount == null) {

@@ -66,11 +66,43 @@ export class UserDynamoDbDao implements UserDaoInterface {
         }
     }
 
-    async updateCounts(oldUser: UserEntity, followeeCount: number, followerCount: number): Promise<void> {
+    async getFollowerCount(alias: string): Promise<number | null> {
+      const params = {
+          TableName: this.tableName,
+          Key: {
+              [this.aliasAttr]: alias
+          }
+      };
+      const output = await this.client.send(new GetCommand(params));
+      if (output.Item === undefined) {
+          console.log("user get returned undefined");
+          throw new Error("No user found for getFollowerCount")
+      } else {
+          return output.Item[this.followersAttr]
+      }
+    }
+
+    async getFolloweeCount(alias: string): Promise<number | null> {
+      const params = {
+          TableName: this.tableName,
+          Key: {
+              [this.aliasAttr]: alias
+          }
+      };
+      const output = await this.client.send(new GetCommand(params));
+      if (output.Item === undefined) {
+          console.log("user get returned undefined");
+          return null;
+      } else {
+          return output.Item[this.followeesAttr]
+      }
+    }
+
+    async updateCounts(alias: string, followeeCount: number, followerCount: number): Promise<void> {
         const params = {
             TableName: this.tableName,
         Key: {
-          [this.aliasAttr]: oldUser.alias,
+          [this.aliasAttr]: alias,
         },
         UpdateExpression: "set followee_count = :fn, follower_count = :ln",
         ExpressionAttributeValues: {
@@ -151,6 +183,21 @@ export class UserDynamoDbDao implements UserDaoInterface {
             return isExpired;
         }
     }
+
+    async getAliasFromSession(token: string): Promise<string | null> {
+      const params = {
+          TableName: this.sessionsTableName,
+          Key: {
+              [this.authTokenAttr]: token,
+          },
+      };
+      const output = await this.client.send(new GetCommand(params));
+      if (output.Item === undefined) {
+          return null;
+      } else {
+          return output.Item[this.aliasAttr];
+      }
+  }
 
     async updateSession(token: string, timestamp: number): Promise<void> {
         const params = {
