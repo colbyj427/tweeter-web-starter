@@ -23,10 +23,10 @@ export class UserService {
           throw new Error("Invalid alias or password");
         }
         //check if the given password matches the one in the database.
-        // const isValid = await bcrypt.compare(password, user.password);
-        // if (!isValid) {
-        //   throw new Error("Incorrect password");
-        // }
+        const isValid = await bcrypt.compare(password, user.password);
+        if (!isValid) {
+          throw new Error("Incorrect password");
+        }
         
         //create token 
         const token = crypto.randomBytes(32).toString('hex');
@@ -45,7 +45,7 @@ export class UserService {
         userImageBytes: string,
         imageFileExtension: string
       ): Promise<[UserDto, string]> {
-        //const hashedPassword = await bcrypt.hash(password, 10);
+        const hashedPassword = await bcrypt.hash(password, 10);
 
         //Put the image in the bucket and get the url
         const imageUrl = await this.dao.putImage(alias, userImageBytes);
@@ -61,7 +61,7 @@ export class UserService {
           firstName,
           lastName,
           alias,
-          password,
+          hashedPassword,
           imageUrl
         )
         await this.dao.put(userEntity)

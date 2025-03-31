@@ -50,7 +50,6 @@ export class StatusService {
         }
       }
     
-      //****** change this to the feed from story */
       public async loadMoreFeedItems (
         authToken: string,
         userAlias: string,
