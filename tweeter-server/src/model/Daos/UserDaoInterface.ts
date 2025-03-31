@@ -13,4 +13,5 @@ export interface UserDaoInterface {
         getSession(token: string): Promise<boolean>;
         getAliasFromSession(token: string): Promise<string | null>;
         updateSession(token: string, timestamp: number): Promise<void>;
+        deleteSession(token: string): Promise<void>;
 }

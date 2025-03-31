@@ -76,14 +76,13 @@ export class UserService {
       public async logout (token: string): Promise<void> {
         // Pause so we can see the logging out message. Delete when the call to the server is implemented.
         await new Promise((res) => setTimeout(res, 1000));
+        this.dao.deleteSession(token);
       };
 
       public async getUser (
         token: string,
         alias: string
       ): Promise<UserDto | null> {
-        // TODO: Replace with the result of calling server
-        //return this.getFakeData(alias)
         const isExpired = await this.dao.getSession(token);
         if (isExpired) {
           throw new Error("Must log in again");
