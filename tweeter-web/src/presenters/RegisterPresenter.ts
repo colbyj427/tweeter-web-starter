@@ -29,10 +29,6 @@ export class RegisterPresenter extends AuthenticationPresenter {
     imageBytes: Uint8Array,
     imageFileExtension: string,
     rememberMe: boolean): Promise<[User, AuthToken]> {
-      console.log("imageBytes:");
-      console.log(this.imageBytes);
-      console.log("image file extension:");
-      console.log(imageFileExtension);
       return this.service.register(
         firstName,
         lastName,
