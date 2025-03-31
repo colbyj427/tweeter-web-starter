@@ -17,19 +17,17 @@ export class UserService {
         password: string
       ): Promise<[UserDto, string]> {
         //encrypt the password        
-        // const salt = await bcrypt.genSalt();
-        // const hashedPassword = await bcrypt.hash(password, salt);
-
         const user = await this.dao.get(alias);
 
         if (user === null) {
           throw new Error("Invalid alias or password");
         }
         //check if the given password matches the one in the database.
-        if (user.password != password) {
-          throw new Error("Incorrect password")
-        }
-
+        // const isValid = await bcrypt.compare(password, user.password);
+        // if (!isValid) {
+        //   throw new Error("Incorrect password");
+        // }
+        
         //create token 
         const token = crypto.randomBytes(32).toString('hex');
         //make the session
@@ -47,8 +45,7 @@ export class UserService {
         userImageBytes: string,
         imageFileExtension: string
       ): Promise<[UserDto, string]> {
-        // const salt = await bcrypt.genSalt();
-        // const hashedPassword = await bcrypt.hash(password, salt);
+        //const hashedPassword = await bcrypt.hash(password, 10);
 
         //Put the image in the bucket and get the url
         //const imageUrl = await this.dao.putImage(alias, userImageBytes);

@@ -28,14 +28,14 @@ export class PostStatusPresenter extends Presenter<PostStatusView> {
       return this._post
     }
 
-    public async submitPost (event: React.MouseEvent, currentUser: User | null, authToken: AuthToken | null) {
+    public async submitPost (event: React.MouseEvent, currentUser: User | null, authToken: AuthToken | null, post: string) {
       event.preventDefault();
     
       this.doFailureReportingOperation(async () => {
         this.isLoading = true;
         this.view.displayInfoMessage("Posting status...", 0);
-  
-        const status = new Status(this.post, currentUser!, Date.now());
+
+        const status = new Status(post, currentUser!, Date.now());
   
         await this.service.postStatus(authToken!, status);
   
