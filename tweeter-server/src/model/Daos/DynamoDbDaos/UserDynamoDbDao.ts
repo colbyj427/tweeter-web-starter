@@ -148,7 +148,7 @@ export class UserDynamoDbDao implements UserDaoInterface {
     async getImage(fileName: string,
         imageStringBase64Encoded: string
       ): Promise<string> {
-        return `https://${"colbystweeterbucket"}.s3.${"us-west-1"}.amazonaws.com/image/${"testFile.png"}`
+        return `https://${"colbystweeterbucket"}.s3.${"us-west-1"}.amazonaws.com/image/${fileName}`
     }
 
     async putSession(token: string, alias: string, timestamp: number): Promise<void> {

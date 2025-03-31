@@ -48,8 +48,8 @@ export class UserService {
         //const hashedPassword = await bcrypt.hash(password, 10);
 
         //Put the image in the bucket and get the url
-        //const imageUrl = await this.dao.putImage(alias, userImageBytes);
-        const imageUrl = await this.dao.getImage(alias, userImageBytes);
+        const imageUrl = await this.dao.putImage(alias, userImageBytes);
+        // const imageUrl = await this.dao.getImage(alias, userImageBytes);
 
         //create token 
         const token = crypto.randomBytes(32).toString('hex');

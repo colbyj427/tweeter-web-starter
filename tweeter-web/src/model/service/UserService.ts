@@ -35,16 +35,19 @@ export class UserService {
         imageFileExtension: string
       ): Promise<[User, AuthToken]> {
         // Not neded now, but will be needed when you make the request to the server in milestone 3
+        console.log("The bytes in the service:");
+        console.log(userImageBytes);
         const imageStringBase64: string =
           Buffer.from(userImageBytes).toString("base64");
-        console.log("********Here are the bytes:" + imageStringBase64)
+        console.log("********Here are the bytes:");
+        console.log(imageStringBase64);
     
         // TODO: Replace with the result of calling the server
-        const user = FakeData.instance.firstUser;
+        // const user = FakeData.instance.firstUser;
     
-        if (user === null) {
-          throw new Error("Invalid registration");
-        }
+        // if (user === null) {
+        //   throw new Error("Invalid registration");
+        // }
 
         const req: RegisterRequest = {
           token: "undefined",
