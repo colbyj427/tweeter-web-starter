@@ -1,4 +1,4 @@
-import { User, FakeData, UserDto } from "tweeter-shared";
+import { User, UserDto } from "tweeter-shared";
 import { FollowerDao } from "../Daos/FollowerDaoInterface"
 import { UserDaoInterface } from "../Daos/UserDaoInterface";
 import { Follower } from "../Entity/Follower";
@@ -18,7 +18,6 @@ export class FollowService {
     pageSize: number,
     lastItem: UserDto | null
   ): Promise<[UserDto[], boolean]> {
-    // TODO: Replace with the result of calling server
     const isExpired = await this.userDao.getSession(token);
     if (isExpired) {
       throw new Error("Must log in again");
@@ -26,7 +25,6 @@ export class FollowService {
     let page = await this.dao.getPageOfFollowers(userAlias, pageSize, lastItem?.alias);
     const dtos = await Promise.all(page.values.map(async (user) => await this.dtoFromFollowerEntity(user)));
     return [dtos.filter((dto): dto is UserDto => dto !== null), page.hasMorePages];
-    //return this.getFakeData(lastItem, pageSize, userAlias);
   };
 
   public async loadMoreFollowees (
@@ -35,7 +33,6 @@ export class FollowService {
     pageSize: number,
     lastItem: UserDto | null
   ): Promise<[UserDto[], boolean]> {
-    // TODO: Replace with the result of calling server
     const isExpired = await this.userDao.getSession(token);
     if (isExpired) {
       throw new Error("Must log in again");
@@ -43,14 +40,7 @@ export class FollowService {
     let page = await this.dao.getPageOfFollowees(userAlias, pageSize, lastItem?.alias);
     const dtos = await Promise.all(page.values.map(async (user) => await this.dtoFromFolloweeEntity(user)));
     return [dtos.filter((dto): dto is UserDto => dto !== null), page.hasMorePages];
-    //return this.getFakeData(lastItem, pageSize, userAlias);
   };
-
-  private async getFakeData(lastItem: UserDto | null, pageSize: number, userAlias: string): Promise<[UserDto[], boolean]> {
-    const [items, hasMore] = FakeData.instance.getPageOfUsers(User.fromDto(lastItem), pageSize, userAlias);
-    const dtos = items.map((user) => user.dto);
-    return [dtos, hasMore];
-  }
 
   public async getIsFollowerStatus (
     token: string,
@@ -78,8 +68,6 @@ export class FollowService {
     token: string,
     user: UserDto
   ): Promise<number> {
-    // TODO: Replace with the result of calling server
-    //return FakeData.instance.getFolloweeCount(user.alias);
     const isExpired = await this.userDao.getSession(token);
     if (isExpired) {
       throw new Error("Must log in again");
@@ -96,8 +84,6 @@ export class FollowService {
     token: string,
     user: UserDto
   ): Promise<number> {
-    // TODO: Replace with the result of calling server
-    //return FakeData.instance.getFollowerCount(user.alias);
     const isExpired = await this.userDao.getSession(token);
     if (isExpired) {
       throw new Error("Must log in again");
@@ -114,7 +100,6 @@ export class FollowService {
     token: string,
     userToFollow: UserDto
   ): Promise<[followerCount: number, followeeCount: number]> {
-    // TODO: Call the server
     const isExpired = await this.userDao.getSession(token);
     if (isExpired) {
       throw new Error("Must log in again");
@@ -123,7 +108,6 @@ export class FollowService {
     const followeeCount = await this.getFolloweeCount(token, userToFollow);
     await this.userDao.updateCounts(userToFollow.alias, followeeCount, followerCount + 1);
 
-    //*****works to here */
     //add a follow to table
     const followerAlias = await this.userDao.getAliasFromSession(token);
     if (followerAlias === null) {
@@ -151,7 +135,6 @@ export class FollowService {
     token: string,
     userToUnfollow: UserDto
   ): Promise<[followerCount: number, followeeCount: number]> {
-    // TODO: Call the server
     const isExpired = await this.userDao.getSession(token);
     if (isExpired) {
       throw new Error("Must log in again");

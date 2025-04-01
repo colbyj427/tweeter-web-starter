@@ -1,5 +1,4 @@
-import { Buffer } from "buffer";
-import { FakeData, User, UserDto } from "tweeter-shared";
+import { User, UserDto } from "tweeter-shared";
 import { UserDaoInterface } from "../Daos/UserDaoInterface";
 import { UserEntity } from "../Entity/User"
 import crypto from 'crypto';
@@ -49,14 +48,12 @@ export class UserService {
 
         //Put the image in the bucket and get the url
         const imageUrl = await this.dao.putImage(alias, userImageBytes);
-        // const imageUrl = await this.dao.getImage(alias, userImageBytes);
 
         //create token 
         const token = crypto.randomBytes(32).toString('hex');
         //make the session
         await this.dao.putSession(token, alias, Date.now());
 
-        //const imageUrl = "imageurlstring";
         const userEntity = new UserEntity(
           firstName,
           lastName,
@@ -74,8 +71,6 @@ export class UserService {
       };
 
       public async logout (token: string): Promise<void> {
-        // Pause so we can see the logging out message. Delete when the call to the server is implemented.
-        await new Promise((res) => setTimeout(res, 1000));
         this.dao.deleteSession(token);
       };
 
@@ -95,15 +90,6 @@ export class UserService {
         const dto = this.entityToDto(userEntity);
         return dto
       };
-
-      private async getFakeData(alias: string): Promise<UserDto | null> {
-        const userItem = FakeData.instance.findUserByAlias(alias);
-        if (userItem) {
-          const dto = userItem.dto
-          return dto
-        }
-        return null
-      }
 
       private entityToDto(entity: UserEntity): UserDto {
         let toDto = new User(

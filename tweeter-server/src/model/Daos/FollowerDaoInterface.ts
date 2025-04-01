@@ -2,13 +2,6 @@ import { DataPage } from "../Entity/DataPage";
 import { Follower } from "../Entity/Follower";
 
 export interface FollowerDao {
-    // readonly tableName: string;
-    // readonly indexName: string;
-    // readonly follower_handleAttr: string;
-    // readonly followee_handleAttr: string;
-    // readonly follower_nameAttr: string;
-    // readonly followee_nameAttr: string;
-
     put(user: Follower): Promise<void>;
     get(user: Follower): Promise<Follower | null>;
     update(oldUser: Follower, newUser: Follower): Promise<void>;

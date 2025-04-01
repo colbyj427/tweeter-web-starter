@@ -68,16 +68,6 @@ import { DataPage } from "../../Entity/DataPage";
             )
         }
     }
-    // async getFeedItem(status: StatusEntity): Promise<StatusEntity | null> {
-
-    // }
-
-    async update(oldStatus: StatusEntity, newStatus: StatusEntity): Promise<void> {
-
-    }
-    async delete(status: StatusEntity): Promise<void> {
-
-    }
 
     async getPageOfStory(userHandle: string, pageSize: number, lastStoryStamp: number | undefined): Promise<DataPage<StatusEntity>> {
         const params = {
@@ -87,6 +77,7 @@ import { DataPage } from "../../Entity/DataPage";
             },
             TableName: this.StoryTableName,
             Limit: pageSize,
+            ScanIndexForward: false,
             ExclusiveStartKey:
                 lastStoryStamp === undefined
                 ? undefined
@@ -117,6 +108,7 @@ import { DataPage } from "../../Entity/DataPage";
         },
         TableName: this.FeedTableName,
         Limit: pageSize,
+        ScanIndexForward: false,
         ExclusiveStartKey:
           lastStoryStamp === undefined ? undefined : 
           {
