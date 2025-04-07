@@ -1,3 +1,4 @@
+import { UserDto } from "tweeter-shared";
 import { DataPage } from "../Entity/DataPage";
 import { StatusEntity } from "../Entity/StatusEntity";
 
@@ -7,4 +8,5 @@ export interface StatusDaoInterface {
     getStoryItem(status: StatusEntity): Promise<StatusEntity | null>;
     getPageOfStory(userHandle: string, pageSize: number, lastStoryStamp: number | undefined): Promise<DataPage<StatusEntity>>;
     getPageOfFeed(userHandle: string, pageSize: number, lastStoryStamp: number | undefined): Promise<DataPage<StatusEntity>>;
+    batchPutInFeed(status: StatusEntity, followers: UserDto[]): Promise<void>
 }

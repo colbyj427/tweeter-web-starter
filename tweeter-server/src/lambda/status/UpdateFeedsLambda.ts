@@ -8,7 +8,9 @@ export const handler = async (request: PostStatusRequest): Promise<TweeterRespon
     const statusService = new StatusService(new StatusDao, new followerDao, new UserDynamoDbDao);
     //send the post to be posted to the user story
     const response  = await statusService.postStatus(request.token, request.status);
-    const response2 = await statusService.sendStatusMessage("https://sqs.us-west-1.amazonaws.com/050451373472/PostStatusQueue", JSON.stringify(request));
+
+    //take something out of the queue and post it to the followers feeds in a batch write
+
     
     return {
         success: true,

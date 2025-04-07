@@ -1,4 +1,5 @@
 import {
+  BatchWriteCommand,
     DeleteCommand,
     DynamoDBDocumentClient,
     GetCommand,
@@ -10,6 +11,7 @@ import {
   import { StatusEntity } from "../../Entity/StatusEntity";
   import { StatusDaoInterface } from "../StatusDaoInterface";
 import { DataPage } from "../../Entity/DataPage";
+import { UserDto } from "tweeter-shared";
   
   export class StatusDao implements StatusDaoInterface {
     readonly StoryTableName = "story";
@@ -46,6 +48,24 @@ import { DataPage } from "../../Entity/DataPage";
           },
         };
         await this.client.send(new PutCommand(params));
+      }
+
+    async batchPutInFeed(status: StatusEntity, followers: UserDto[]): Promise<void> {
+        const params = {
+          RequestItems: {
+            [this.FeedTableName]: followers.map((follower) => ({
+              PutRequest: {
+                Item: {
+                  [this.ownerAttr]: follower.alias,
+                  [this.timestampAttr]: status.timestamp,
+                  [this.poster_handleAttr]: status.user_handle,
+                  [this.statusAttr]: status.status
+                },
+              },
+            })),
+          },
+        };
+        await this.client.send(new BatchWriteCommand(params));
       }
   
     async getStoryItem(status: StatusEntity): Promise<StatusEntity | null> {
