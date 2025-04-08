@@ -3,6 +3,7 @@ import { UserEntity } from "../Entity/User";
 export interface UserDaoInterface {
         put(user: UserEntity): Promise<void>;
         get(user: string): Promise<UserEntity | null>;
+        batchGetUsers(aliases: string[]): Promise<UserEntity[]>;
         getFollowerCount(user: string): Promise<number | null>;
         getFolloweeCount(user: string): Promise<number | null>;
         updateCounts(oldUser: string, followeeCount: number, followerCount: number): Promise<void>;

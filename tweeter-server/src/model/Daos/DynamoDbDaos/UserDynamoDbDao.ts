@@ -1,4 +1,5 @@
 import {
+  BatchGetCommand,
     DeleteCommand,
     DynamoDBDocumentClient,
     GetCommand,
@@ -66,6 +67,28 @@ export class UserDynamoDbDao implements UserDaoInterface {
               )
         }
     }
+    
+    async batchGetUsers(aliases: string[]): Promise<UserEntity[]> {
+      // const keys = aliases.map(alias => ({ alias }));
+      const keys = aliases.map(alias => ({ [this.aliasAttr]: alias }));
+    
+      const response = await this.client.send(new BatchGetCommand({
+        RequestItems: {
+          [this.tableName]: {
+            Keys: keys
+          }
+        }
+      }));
+    
+      return (response.Responses?.[this.tableName] ?? []).map(item => new UserEntity(
+        item[this.firstNameAttr],
+        item[this.LastNameAttr],
+        item[this.aliasAttr],
+        item[this.passwordAttr],
+        item[this.imageUrlAttr]
+      ));
+    }
+    
 
     async getFollowerCount(alias: string): Promise<number | null> {
       const params = {
@@ -225,6 +248,4 @@ export class UserDynamoDbDao implements UserDaoInterface {
       };
       await this.client.send(new DeleteCommand(params));
     }
-
-
 }

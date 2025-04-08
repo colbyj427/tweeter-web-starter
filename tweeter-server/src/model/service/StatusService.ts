@@ -80,25 +80,6 @@ export class StatusService {
           newStatus.timestamp
         )
         this.statusDao.putInStory(statusEntity)
-
-        //Next we need to get all the users following this user, and add the story to each of their feeds.
-        //query all the followers,
-        //add the status to the feed one at a time,
-        // let lastHandle: string | undefined = undefined;
-        // let hasMore = true;
-
-        // while (hasMore) {
-        //   let page = await this.followerDao.getPageOfFollowers(newStatus.user.alias, 10, lastHandle);
-        //   for (const follower of page.values) {
-        //     const followerAlias = follower.follower_handle;
-        //     await this.statusDao.putInFeed(followerAlias, statusEntity);
-        //   }
-        //   if (page.values.length > 0) {
-        //     lastHandle = page.values[page.values.length - 1].follower_handle;
-        //   } else {
-        //     hasMore = false;
-        //   }
-        // }
       };
 
       public async sendStatusMessage(sqs_url: string, messageBody: string): Promise<void> {
@@ -127,51 +108,7 @@ export class StatusService {
           newStatus.post,
           newStatus.timestamp
         )
-        
 
-        //add the status to the feed one at a time,
-        let lastHandle: string | undefined = undefined;
-        let hasMore = true;
-
-        while (hasMore) {
-          let page = await this.followerDao.getPageOfFollowers(newStatus.user.alias, 10, lastHandle);
-          for (const follower of page.values) {
-            const followerAlias = follower.follower_handle;
-            await this.statusDao.putInFeed(followerAlias, statusEntity);
-          }
-          if (page.values.length > 0) {
-            lastHandle = page.values[page.values.length - 1].follower_handle;
-          } else {
-            hasMore = false;
-          }
-        }
+        await this.statusDao.batchPutInFeed(statusEntity, followers);
       }
-
-      // async createUsers(userList: User[], password: string) {
-      //   if (userList.length == 0) {
-      //     console.log("zero followers to batch write");
-      //     return;
-      //   }
-    
-      //   const hashedPassword = await bcrypt.hash(password, 10);
-    
-      //   const params = {
-      //     RequestItems: {
-      //       [this.tableName]: this.createPutUserRequestItems(
-      //         userList,
-      //         hashedPassword
-      //       ),
-      //     },
-      //   };
-    
-      //   try {
-      //     const resp = await this.client.send(new BatchWriteCommand(params));
-      //     await this.putUnprocessedItems(resp, params);
-      //   } catch (err) {
-      //     throw new Error(
-      //       `Error while batch writing users with params: ${params}: \n${err}`
-      //     );
-      //   }
-      // }
-    
 }

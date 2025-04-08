@@ -12,6 +12,21 @@ export class FollowService {
     this.userDao = userDao;
   }
 
+  // public async loadMoreFollowers (
+  //   token: string,
+  //   userAlias: string,
+  //   pageSize: number,
+  //   lastItem: UserDto | null
+  // ): Promise<[UserDto[], boolean]> {
+  //   const isExpired = await this.userDao.getSession(token);
+  //   if (isExpired) {
+  //     throw new Error("Must log in again");
+  //   }
+  //   let page = await this.dao.getPageOfFollowers(userAlias, pageSize, lastItem?.alias);
+  //   const dtos = await Promise.all(page.values.map(async (user) => await this.dtoFromFollowerEntity(user)));
+  //   return [dtos.filter((dto): dto is UserDto => dto !== null), page.hasMorePages];
+  // };
+
   public async loadMoreFollowers (
     token: string,
     userAlias: string,
@@ -23,9 +38,33 @@ export class FollowService {
       throw new Error("Must log in again");
     }
     let page = await this.dao.getPageOfFollowers(userAlias, pageSize, lastItem?.alias);
-    const dtos = await Promise.all(page.values.map(async (user) => await this.dtoFromFollowerEntity(user)));
-    return [dtos.filter((dto): dto is UserDto => dto !== null), page.hasMorePages];
-  };
+    const aliases = page.values.map(f => f.follower_handle);
+    const userEntities = await this.userDao.batchGetUsers(aliases);
+    const users = userEntities.map(entity =>
+      new User(entity.firstName, entity.lastName, entity.alias, entity.imageUrl)
+    );
+    const userDtos = users.map(user => user.dto);
+    
+    return [userDtos, page.hasMorePages];
+  }
+
+  public async loadMoreFollowersBatch (
+    token: string,
+    userAlias: string,
+    pageSize: number,
+    lastItem: UserDto | null
+  ): Promise<[UserDto[], boolean]> {
+    let page = await this.dao.getPageOfFollowers(userAlias, pageSize, lastItem?.alias);
+    const aliases = page.values.map(f => f.follower_handle);
+    const userEntities = await this.userDao.batchGetUsers(aliases);
+    const users = userEntities.map(entity =>
+      new User(entity.firstName, entity.lastName, entity.alias, entity.imageUrl)
+    );
+    const userDtos = users.map(user => user.dto);
+    
+    return [userDtos, page.hasMorePages];
+  }
+  
 
   public async loadMoreFollowees (
     token: string,
