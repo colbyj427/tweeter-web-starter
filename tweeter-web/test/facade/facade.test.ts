@@ -4,6 +4,7 @@ import { PostStatusPresenter, PostStatusView } from "../../src/presenters/PostSt
 import { GetCountRequest, PagedStatusItemRequest, PagedUserItemRequest, RegisterRequest, LoginRequest, StatusDto, UserDto } from "tweeter-shared";
 import "isomorphic-fetch"
 
+//milestone 4b
 describe("Status Integration", () => {
     const serverFacade = new ServerFacade();
 
