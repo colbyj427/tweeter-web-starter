@@ -6,42 +6,6 @@ import { UserDynamoDbDao } from "../../model/Daos/DynamoDbDaos/UserDynamoDbDao";
 import { FollowService } from "../../model/service/FollowService";
 
 //the message on the queue is a PostStatusRequest in json format
-// export const handler = async (event: any): Promise<TweeterResponse> => {
-//     const statusService = new StatusService(new StatusDao, new followerDao, new UserDynamoDbDao);
-//     const followService = new FollowService(new followerDao, new UserDynamoDbDao);
-
-//     //parse the event
-//     for (const record of event.Records) {
-//         try {
-//             let messageBody = record.body;
-//             const request: PostStatusRequest = JSON.parse(messageBody);
-//             //Get a page of followers of the poster
-//             //then send that batch to the queue and loop around for more until its done.
-//             let hasMorePages = true;
-//             let lastItem = null;
-//             while (hasMorePages) {
-//                 const [page, hasMore] = await followService.loadMoreFollowers(request.token, request.status.user.alias, 20, lastItem);
-//                 hasMorePages = hasMore;
-//                 lastItem = page.length > 0 ? page[page.length - 1] : lastItem;
-//                 console.log("sending page to feed queue", page);
-//                 console.log("Last item:", lastItem);
-//                 await statusService.sendStatusMessage("https://sqs.us-west-1.amazonaws.com/050451373472/UpdateFeedQueue", JSON.stringify({
-//                     users: page,
-//                     status: request.status
-//                 }));
-//             }
-//     } catch (err) {
-//         console.error("Failed to process record:", record, err);
-//     }
-//     }
-    
-    
-//     return {
-//         success: true,
-//         message: null,
-//     }
-// }
-
 function sleep(ms: number) {
     return new Promise(resolve => setTimeout(resolve, ms));
   }

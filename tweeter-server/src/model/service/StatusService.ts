@@ -110,5 +110,6 @@ export class StatusService {
         )
 
         await this.statusDao.batchPutInFeed(statusEntity, followers);
+        console.log("Success, posted to feeds");
       }
 }
